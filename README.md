@@ -53,12 +53,14 @@ npm run dev
 
 ### Variables de entorno (`.env.local`)
 
-| Variable         | Descripción                                   | Por defecto       |
-| ---------------- | --------------------------------------------- | ----------------- |
-| `GEMINI_API_KEY` | Clave de la API de Google Gemini (obligatoria) | —                 |
-| `GEMINI_MODEL`   | Modelo a usar                                  | `gemini-2.5-pro`  |
+| Variable         | Descripción                                   | Por defecto        |
+| ---------------- | --------------------------------------------- | ------------------ |
+| `GEMINI_API_KEY` | Clave de la API de Google Gemini (obligatoria) | —                  |
+| `GEMINI_MODEL`   | Modelo a usar                                  | `gemini-2.5-flash` |
 
-Modelos alternativos: `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-pro`.
+`gemini-2.5-flash` tiene **límites generosos en la capa gratuita** y soporta
+video. Para máxima calidad (plan de pago): `gemini-2.5-pro`. Otros:
+`gemini-2.0-flash`, `gemini-1.5-pro`.
 
 ---
 
@@ -82,7 +84,9 @@ La IA inyecta siempre estos archivos de `content/context/` en cada petición.
 2. **Marca auditiva** — la locución **siempre** menciona **ElaBela** de forma
    orgánica (en medio o como CTA final).
 
-El logotipo es solo un recurso de contexto para la IA: no satura la interfaz.
+El logotipo de ElaBela es **solo un recurso de contexto para la IA** y nunca se
+muestra en la interfaz. Colócalo en la carpeta [`logo/`](logo/) (ver su README).
+El logo del propio proyecto es un **gatito animado** (`CatLogo`).
 
 ---
 
@@ -121,4 +125,4 @@ src/
 
 ---
 
-_Hecho con cariño para **ElaBela** glow._
+_Content Studio IA — tu estudio creativo con IA. 🐱_
