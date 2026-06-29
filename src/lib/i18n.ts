@@ -82,6 +82,12 @@ export const dict = {
       "Completa el brief y pulsa «Generar guion» para ver la magia.",
     summary: "Idea central",
     hookStrategy: "Estrategia del gancho",
+    locutionTitle: "Locución para ElevenLabs",
+    locutionHintIA:
+      "Voz en off completa y continua. Cópiala y pégala en ElevenLabs para generar el audio principal.",
+    locutionHintHybrid:
+      "Lo que dice el presentador en cada toma (separado por clip).",
+    copyAll: "Copiar todo",
     analysisTitle: "Lo que detecté del video",
     scriptTitle: "Guion",
     colAudio: "Locución / Audio",
@@ -203,6 +209,12 @@ export const dict = {
       "Preencha o brief e clique em «Gerar roteiro» para ver a mágica.",
     summary: "Ideia central",
     hookStrategy: "Estratégia do gancho",
+    locutionTitle: "Locução para ElevenLabs",
+    locutionHintIA:
+      "Voz em off completa e contínua. Copie e cole no ElevenLabs para gerar o áudio principal.",
+    locutionHintHybrid:
+      "O que o apresentador diz em cada tomada (separado por clipe).",
+    copyAll: "Copiar tudo",
     analysisTitle: "O que detectei do vídeo",
     scriptTitle: "Roteiro",
     colAudio: "Locução / Áudio",

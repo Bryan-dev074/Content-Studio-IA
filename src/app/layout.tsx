@@ -3,6 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
+import { CustomCursor } from "@/components/CustomCursor";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -40,7 +41,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <I18nProvider>{children}</I18nProvider>
+          <I18nProvider>
+            {children}
+            <CustomCursor />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

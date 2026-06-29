@@ -37,7 +37,7 @@ export function InputPanel({
   loading,
 }: {
   onGenerate: (req: GenerateRequest) => void;
-  onExample: () => void;
+  onExample: (mode: ProductionMode) => void;
   loading: boolean;
 }) {
   const { t } = useI18n();
@@ -182,12 +182,12 @@ export function InputPanel({
 
         <button
           type="button"
-          onClick={onExample}
+          onClick={() => onExample(mode)}
           disabled={loading}
           className="flex h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface/50 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-foreground disabled:opacity-50"
         >
           <PlayIcon className="h-4 w-4" />
-          {t.seeExample}
+          {t.seeExample} · {mode === "hibrido" ? t.modeHybrid : t.modeIA}
         </button>
       </motion.div>
     </motion.section>

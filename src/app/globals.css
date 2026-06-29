@@ -99,6 +99,15 @@ body {
   color: var(--primary-foreground);
 }
 
+/* Cursor personalizado: oculta el nativo solo en punteros finos y solo cuando
+   el JS activó la clase (si el JS no corre, el cursor nativo se mantiene). */
+@media (hover: hover) and (pointer: fine) {
+  html.cursor-custom,
+  html.cursor-custom * {
+    cursor: none !important;
+  }
+}
+
 /* Scrollbar estilizada */
 ::-webkit-scrollbar {
   width: 10px;

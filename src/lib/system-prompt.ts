@@ -72,12 +72,20 @@ export async function buildSystemInstruction(
   se incrusta detrás en postproducción).
 - B-Roll = clips de soporte/producto con IA: cada uno con su prompt "imagen-0c"
   + un prompt "animacion" (image-to-video) + elección de modelo + diseño de SFX.
+- AUDIO: aquí la locución va POR ESCENAS / CLIPS — lo que el presentador dice en
+  CADA toma, separado por su timecode (NO como un único bloque continuo).
 - Como NO hay gasto en Lipsync, vuelca el presupuesto fuerte a Seedance 2.0
   (alta calidad) en las tomas donde el producto es el protagonista.`
       : `MODO ACTUAL: **100% IA (Lipsync + B-Roll)**.
+- FLUJO DE AUDIO (IMPORTANTE): la locución completa se genera PRIMERO en
+  ElevenLabs como UNA sola voz en off continua. Los videos se generan SIN audio
+  y luego se les carga ese audio de ElevenLabs, lo que FUERZA la sincronización
+  labial. Por eso la locución debe leerse fluida y natural como un único bloque
+  continuo de principio a fin (un solo hilo, sin etiquetas técnicas).
 - El Video Maestro (presentador que habla) usa Lipsync con Seedance 2.0 mini.
-  Entrega su prompt "imagen-0c" (frame del avatar/modelo, ideal nanobanana pro)
-  y un prompt "lipsync" con los parámetros de animación de labios.
+  Entrega su prompt "imagen-0c" (frame del avatar/modelo, NanoBanana Pro en Flow)
+  y un prompt "lipsync" con los parámetros de animación de labios (lipsync
+  perfecto con el audio de ElevenLabs).
 - Si el clip inicial necesita ser de alta calidad como Gancho, usa Seedance 2.0.
 - Cada clip de soporte: prompt "imagen-0c" + prompt "animacion" (image-to-video)
   + elección del mejor modelo (Kling 3.0 para macro/texturas, Omni Flash para
@@ -100,12 +108,11 @@ ${modeBlock}
 
 ═══════════════ REGLAS DE ORO (INQUEBRANTABLES) ═══════════════
 1. MARCA VISUAL: el prompt de la imagen base (0c) del PRIMER clip / Gancho DEBE
-   DECIR EXPLÍCITAMENTE que se incluya el logotipo de ElaBela en la escena, de
-   forma SUTIL / DISCRETA o de fondo (impreso en el empaque del producto, o en un
-   cartel / placa / etiqueta / espejo del entorno, ligeramente desenfocado), sin
-   tapar el sujeto ni saturar. Descríbelo (wordmark serif 'Ela, Bela' con un
-   corazoncito y 'glow' debajo, marrón cacao) para que NanoBanana Pro lo
-   reproduzca bien. Recibes el archivo del logo solo como referencia visual.
+   DECIR EXPLÍCITAMENTE que se use el logotipo de ElaBela PROPORCIONADO (lo
+   recibes como imagen de referencia) y ubicarlo de forma natural según la
+   escena (un cuadro/poster enmarcado de fondo, el empaque del producto, un
+   cartel, etiqueta o espejo del entorno...), sin taparlo ni deformarlo. NO
+   describas el logo en detalle: solo indica que se use el logo proporcionado.
    Ningún guion se entrega sin esta instrucción del logo en el frame inicial.
 2. MARCA AUDITIVA: la locución DEBE mencionar "ElaBela" de forma orgánica, en el
    medio o al final como CTA. Nunca forzado.
@@ -118,12 +125,22 @@ ${modeBlock}
   pan, snap zoom...) y la acción exacta de ese segundo a ese segundo.
 - En "audio" escribe la locución limpia y natural, optimizada para ElevenLabs.
 - Los prompts de IMAGEN 0c se generan con **NanoBanana Pro en Google Flow**:
-  redáctalos en lenguaje natural fotográfico, ULTRA-DETALLADOS e impecables —
-  sujeto, composición y encuadre, lente/cámara virtual, iluminación, paleta de
-  color, textura y materiales, fondo/props, estado de ánimo y calidad
+  redáctalos en lenguaje natural fotográfico, EXTREMADAMENTE DETALLADOS e
+  impecables — sujeto, composición y encuadre, lente/cámara virtual, iluminación,
+  paleta de color, textura y materiales, fondo/props, estado de ánimo y calidad
   ("hyperrealistic, 8k, photoreal skin texture", formato vertical 9:16). Los
   prompts de ANIMACIÓN describen el movimiento físico y de cámara para el modelo
-  image-to-video.
+  image-to-video, con la mayor precisión posible.
+- INTEGRIDAD Y CONSISTENCIA — incluye SIEMPRE estas salvaguardas en los prompts
+  (de imagen y de video) cuando apliquen: el PRODUCTO NO debe deformarse,
+  derretirse ni cambiar de forma, color, tamaño, etiqueta ni marca entre frames;
+  el texto y el logo deben quedar LEGIBLES, nítidos y sin distorsión; mantener la
+  MISMA identidad y rostro del personaje en todos los clips (cara, peinado,
+  vestuario y tono de piel consistentes); manos y dedos anatómicamente correctos;
+  nada de morphing, flickering ni artefactos. Siempre formato vertical 9:16.
+- En los prompts de LIPSYNC / Video Maestro especifica SIEMPRE: "sincronización
+  labial PERFECTA con el audio, movimientos de boca naturales y precisos, sin
+  desfase, expresión facial coherente y rostro estable (sin deformaciones)".
 - Respeta los costos: usa los modelos y precios EXACTOS de la matriz. La suma de
   "highfieldTotal" NO puede pasar de 100c y "omniFlashTotal" NO puede pasar de
   38c. Calcula los totales tú mismo y cuádralos con las filas.

@@ -9,8 +9,8 @@ import { Background } from "@/components/Background";
 import { InputPanel } from "@/components/InputPanel";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { useI18n } from "@/components/providers/I18nProvider";
-import { demoScript } from "@/lib/demo";
-import type { GenerateRequest, ScriptResult } from "@/lib/types";
+import { demoScript, demoScriptHybrid } from "@/lib/demo";
+import type { GenerateRequest, ProductionMode, ScriptResult } from "@/lib/types";
 
 export default function Home() {
   const { t } = useI18n();
@@ -28,11 +28,11 @@ export default function Home() {
     }, 60);
   };
 
-  const showExample = () => {
+  const showExample = (mode: ProductionMode) => {
     setError("");
     setLoading(false);
     setIsExample(true);
-    setResult(demoScript);
+    setResult(mode === "hibrido" ? demoScriptHybrid : demoScript);
     scrollToResults();
   };
 

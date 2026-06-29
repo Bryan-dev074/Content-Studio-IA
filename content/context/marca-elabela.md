@@ -36,31 +36,29 @@ el `glow.png` como imagen de referencia del logo). Por eso los prompts de imagen
 fotográfica, rica y concreta de la escena, en lenguaje natural.
 
 ### Cómo integrar el logo en el prompt de imagen 0c
-El prompt 0c DEBE incluir SIEMPRE, de forma explícita, una instrucción para que
-aparezca el logotipo de ElaBela en la escena, descrita con detalle para que
-NanoBanana Pro lo reproduzca bien. Ejemplo del tipo de frase a incluir:
-> "...en la escena se ve, de forma **sutil y discreta** y bien integrada en el
-> entorno, el logotipo de la marca **ElaBela** (wordmark serif elegante
-> 'Ela, Bela' con un pequeño corazón y la palabra 'glow' debajo, en tono marrón
-> cacao): por ejemplo impreso en el empaque del producto, o de fondo en un
-> cartel / placa / espejo / etiqueta dentro del escenario, ligeramente
-> desenfocado — sin tapar el sujeto principal ni saturar la composición."
+NO describas el logo con detalle (ni la tipografía, ni el corazón, ni los
+colores). Simplemente indica que se debe **usar el logotipo de ElaBela que se te
+proporcionó como imagen de referencia** y, según el caso, decide DÓNDE colocarlo
+de forma natural dentro de la escena. Ejemplos del tipo de frase a incluir:
+> "...incluir el logotipo de ElaBela (proporcionado como referencia) en un
+> cuadro/poster enmarcado en la pared del fondo."
 
-La idea es que el logo se perciba **dentro del mundo de la escena** (en el
-producto o en el fondo), de manera natural y premium, NUNCA pegado de forma
-forzada como un sticker encima de la imagen.
+> "...el logotipo de ElaBela (imagen de referencia) aparece impreso en el empaque
+> del producto, bien integrado y sin deformarse."
 
-> La IA recibe el archivo del logo (`glow.png`) solo como REFERENCIA VISUAL para
-> entender cómo es y describirlo/colocarlo mejor. No tiene que dibujarlo ella.
+Varía la ubicación según la escena (cuadro de fondo, empaque, cartel, etiqueta,
+espejo, etc.), siempre de forma natural y sin tapar el sujeto principal. La IA
+recibe el archivo `glow.png` solo como REFERENCIA: no hay que describirlo, solo
+indicar que se use.
 
 ## ⭐ REGLAS DE ORO (OBLIGATORIAS EN CADA GENERACIÓN) ⭐
 
 ### Regla 1 — Marca Visual (imagen 0c del Gancho)
 El prompt de la **imagen base (0c) del primer clip / Gancho** SIEMPRE debe
-**decir explícitamente que incluya el logotipo de ElaBela** en la escena (de
-forma sutil/discreta o de fondo, siguiendo la descripción de arriba), redactado
-para NanoBanana Pro. Es una regla inquebrantable: ningún guion se entrega sin esa
-instrucción del logo en el frame inicial.
+**decir explícitamente que se use el logotipo de ElaBela proporcionado** y
+ubicarlo de forma natural en la escena (un cuadro de fondo, el empaque, un
+cartel, etc.), sin describir el logo en detalle. Es una regla inquebrantable:
+ningún guion se entrega sin esa instrucción del logo en el frame inicial.
 
 ### Regla 2 — Marca Auditiva (locución)
 El guion de locución SIEMPRE debe mencionar la marca **"ElaBela"** de forma

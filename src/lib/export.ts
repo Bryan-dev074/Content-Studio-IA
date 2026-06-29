@@ -26,6 +26,15 @@ export function scriptToMarkdown(r: ScriptResult, lang: Lang): string {
     out.push("");
   }
 
+  // Locución lista para ElevenLabs
+  out.push(`## ${lang === "es" ? "Locución (ElevenLabs)" : "Locução (ElevenLabs)"}`);
+  if (r.productionMode === "hibrido") {
+    r.scenes?.forEach((s) => out.push(`- [${s.timecode}] ${L(s.audio)}`));
+  } else {
+    out.push(r.scenes?.map((s) => L(s.audio)).join("\n\n") ?? "");
+  }
+  out.push("");
+
   out.push(`## ${lang === "es" ? "Guion" : "Roteiro"}`);
   out.push("");
 

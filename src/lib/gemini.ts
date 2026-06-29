@@ -164,7 +164,7 @@ export async function generateScript(
   const logo = await loadBrandLogo();
   if (logo) {
     parts.push({
-      text: "REFERENCIA VISUAL del logotipo de ElaBela (solo para que sepas cómo es). El prompt de la imagen 0c del Gancho —que se generará con NanoBanana Pro en Flow— debe pedir que este logo aparezca de forma sutil/discreta o de fondo, integrado en la escena (en el empaque, un cartel, etiqueta o espejo), no como sticker encima:",
+      text: "Logotipo de ElaBela PROPORCIONADO como referencia. El prompt de la imagen 0c del Gancho (que se generará con NanoBanana Pro en Flow) debe indicar que se USE este logo proporcionado, ubicándolo de forma natural según la escena (un cuadro/poster de fondo, el empaque del producto, un cartel...). No lo describas en detalle; solo di que se use el logo proporcionado:",
     });
     parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
   }

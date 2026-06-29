@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CopyButton } from "./CopyButton";
 import { RefineModal } from "./RefineModal";
-import { WandIcon } from "./icons";
+import { WandIcon, ImageIcon, FilmIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { cn } from "@/lib/utils";
 import type { Lang, Localized, PromptBlock, ProductionMode } from "@/lib/types";
@@ -43,8 +43,8 @@ export function PromptCard({
         viewport={{ once: true, margin: "-40px" }}
         className="rounded-xl border border-border bg-surface-2/50 p-3.5"
       >
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span
               className={cn(
                 "rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
@@ -56,12 +56,17 @@ export function PromptCard({
             <span className="text-sm font-medium text-foreground">
               {prompt.title[lang]}
             </span>
-            {prompt.model && (
-              <span className="rounded-md border border-border px-2 py-0.5 text-[11px] text-muted">
-                {prompt.model}
-              </span>
-            )}
           </div>
+          {prompt.model && (
+            <span className="gradient-primary inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold text-primary-foreground shadow-soft">
+              {prompt.kind === "imagen-0c" || prompt.kind === "fondo-chroma" ? (
+                <ImageIcon className="h-3.5 w-3.5" />
+              ) : (
+                <FilmIcon className="h-3.5 w-3.5" />
+              )}
+              {prompt.model}
+            </span>
+          )}
         </div>
 
         <textarea

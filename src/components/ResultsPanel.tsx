@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SceneCard } from "./SceneCard";
+import { LocutionPanel } from "./LocutionPanel";
 import { CostTable } from "./CostTable";
 import { LoadingState } from "./LoadingState";
 import { SegmentedToggle } from "./SegmentedToggle";
@@ -230,6 +231,13 @@ export function ResultsPanel({
           </motion.button>
         </div>
       </motion.div>
+
+      {/* Locución para ElevenLabs */}
+      <LocutionPanel
+        scenes={data.scenes}
+        mode={data.productionMode}
+        lang={scriptLang}
+      />
 
       {/* Guion: escenas */}
       <div className="space-y-4">
