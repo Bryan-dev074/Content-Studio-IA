@@ -17,15 +17,15 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Content Studio IA · ElaBela",
+  title: "Content Studio IA — Generador de guiones con IA",
   description:
-    "Generador premium de guiones para anuncios de video con IA. Analiza un anuncio ganador y produce un guion impecable en español y portugués.",
+    "Estudio creativo con IA: analiza un anuncio ganador y produce un guion impecable, segundo a segundo, en español y portugués.",
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4e9e4" },
-    { media: "(prefers-color-scheme: dark)", color: "#141010" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f7fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0d17" },
   ],
 };
 

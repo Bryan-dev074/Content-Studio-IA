@@ -6,7 +6,7 @@ import { SceneCard } from "./SceneCard";
 import { CostTable } from "./CostTable";
 import { LoadingState } from "./LoadingState";
 import { SegmentedToggle } from "./SegmentedToggle";
-import { ElaBelaLogo } from "./ElaBelaLogo";
+import { CatLogo } from "./CatLogo";
 import { DownloadIcon, GlobeIcon, SparklesIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { scriptToMarkdown } from "@/lib/export";
@@ -99,12 +99,9 @@ export function ResultsPanel({
         animate={{ opacity: 1, scale: 1 }}
         className="glass flex min-h-[420px] flex-col items-center justify-center gap-5 rounded-2xl p-10 text-center shadow-soft"
       >
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ElaBelaLogo showWordmark={false} className="scale-150" />
-        </motion.div>
+        <div className="grid h-24 w-24 place-items-center rounded-3xl border border-border bg-surface-2/50 shadow-soft">
+          <CatLogo className="h-16 w-16" />
+        </div>
         <div>
           <h3 className="font-serif text-2xl font-semibold text-foreground">
             {t.resultsEmptyTitle}

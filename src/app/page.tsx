@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
+import { CatLogo } from "@/components/CatLogo";
 import { Background } from "@/components/Background";
 import { InputPanel } from "@/components/InputPanel";
 import { ResultsPanel } from "@/components/ResultsPanel";
@@ -75,10 +76,11 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-border py-8 text-center text-sm text-muted">
+      <footer className="flex items-center justify-center gap-2 border-t border-border py-8 text-center text-sm text-muted">
+        <CatLogo className="h-5 w-5" animated={false} />
         <p>
-          {t.appName} · <span className="font-serif text-foreground">ElaBela</span>{" "}
-          glow
+          <span className="font-serif text-foreground">{t.appName}</span> ·{" "}
+          {t.footerNote}
         </p>
       </footer>
     </>

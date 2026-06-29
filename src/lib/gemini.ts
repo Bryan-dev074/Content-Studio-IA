@@ -11,6 +11,7 @@ import {
   buildRefineSystemInstruction,
   buildRefineUserContent,
 } from "./system-prompt";
+import { loadBrandLogo } from "./brand-asset";
 import { extractJson, sleep } from "./utils";
 import type {
   GenerateRequest,
@@ -31,7 +32,38 @@ function getClient(): GoogleGenAI {
 }
 
 function getModel(): string {
-  return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-pro";
+  // gemini-2.5-flash: límites generosos en la capa GRATUITA y soporta video.
+  return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash";
+}
+
+/**
+ * Llama a generateContent reintentando ante errores transitorios
+ * (429 rate limit, 503 sobrecarga, 500). Evita que un pico momentáneo en la
+ * capa gratuita rompa la generación.
+ */
+async function generateWithRetry(
+  ai: GoogleGenAI,
+  params: Parameters<typeof ai.models.generateContent>[0],
+) {
+  const MAX = 3;
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < MAX; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (err) {
+      lastErr = err;
+      const status = (err as { status?: number })?.status;
+      const msg = err instanceof Error ? err.message : String(err);
+      const transient =
+        status === 429 ||
+        status === 500 ||
+        status === 503 ||
+        /\b(429|500|503)\b|rate|quota|overloaded|unavailable|temporar/i.test(msg);
+      if (!transient || attempt === MAX - 1) break;
+      await sleep(1800 * (attempt + 1));
+    }
+  }
+  throw lastErr;
 }
 
 // ── Subida de video a la Files API ───────────────────────────
@@ -115,7 +147,17 @@ export async function generateScript(
     });
   }
 
-  const response = await ai.models.generateContent({
+  // Referencia visual del logo de ElaBela (si está en /logo). Recurso interno
+  // para la IA: debe aparecer en la imagen 0c del Gancho. No se muestra en la UI.
+  const logo = await loadBrandLogo();
+  if (logo) {
+    parts.push({
+      text: "Referencia visual del LOGOTIPO de ElaBela. Debe aparecer de forma visible pero elegante en el prompt de la imagen 0c del Gancho:",
+    });
+    parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
+  }
+
+  const response = await generateWithRetry(ai, {
     model: getModel(),
     contents: [{ role: "user", parts }],
     config: {
@@ -143,7 +185,7 @@ export async function refinePrompt(
 ): Promise<RefineResponse> {
   const ai = getClient();
 
-  const response = await ai.models.generateContent({
+  const response = await generateWithRetry(ai, {
     model: getModel(),
     contents: [{ role: "user", parts: [{ text: buildRefineUserContent(req) }] }],
     config: {

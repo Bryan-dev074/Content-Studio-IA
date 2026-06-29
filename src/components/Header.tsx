@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ElaBelaLogo } from "./ElaBelaLogo";
+import { CatLogo } from "./CatLogo";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 import { SparklesIcon } from "./icons";
@@ -17,8 +17,10 @@ export function Header() {
       className="sticky top-3 z-40 px-3 sm:px-5"
     >
       <div className="glass mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-2xl px-3 py-2.5 shadow-soft sm:px-4">
-        <div className="flex items-center gap-3">
-          <ElaBelaLogo showWordmark={false} />
+        <div className="flex items-center gap-2.5">
+          <div className="grid h-11 w-11 place-items-center rounded-2xl border border-border bg-surface-2/60 shadow-soft">
+            <CatLogo className="h-8 w-8" />
+          </div>
           <div className="leading-tight">
             <p className="flex items-center gap-1.5 font-serif text-base font-semibold tracking-tight text-foreground sm:text-lg">
               Content Studio

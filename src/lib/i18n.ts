@@ -8,8 +8,9 @@ export const LANGS: { code: Lang; label: string; flag: string }[] = [
 export const dict = {
   es: {
     appName: "Content Studio IA",
-    tagline: "Generador de guiones para anuncios · ElaBela",
-    brandPill: "by ElaBela",
+    tagline: "Generador de guiones para anuncios con IA",
+    brandPill: "Estudio de guiones IA",
+    footerNote: "Tu estudio creativo con IA",
     heroTitle: "De un anuncio ganador a tu",
     heroHighlight: "próximo guion viral",
     heroLead:
@@ -119,8 +120,9 @@ export const dict = {
   },
   pt: {
     appName: "Content Studio IA",
-    tagline: "Gerador de roteiros para anúncios · ElaBela",
-    brandPill: "by ElaBela",
+    tagline: "Gerador de roteiros para anúncios com IA",
+    brandPill: "Estúdio de roteiros IA",
+    footerNote: "Seu estúdio criativo com IA",
     heroTitle: "De um anúncio vencedor ao seu",
     heroHighlight: "próximo roteiro viral",
     heroLead:

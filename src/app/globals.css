@@ -5,50 +5,50 @@
 
 /* ── Paleta semántica (Día) ─────────────────────────────────── */
 :root {
-  --background: #f4e9e4;
-  --background-2: #efddd6;
-  --foreground: #3a2722;
-  --surface: #fffaf8;
-  --surface-2: #ffffff;
-  --surface-border: rgba(94, 58, 50, 0.12);
-  --muted: #8a6b62;
-  --muted-2: #a98a80;
-  --primary: #6b4a40;
-  --primary-foreground: #fdf6f3;
-  --accent: #c0846f;
-  --accent-2: #e0a99a;
-  --ring: rgba(192, 132, 111, 0.5);
-  --success: #4f9d7e;
-  --danger: #c4564f;
-  --shadow-color: 30deg 30% 60%;
+  --background: #f5f7fc;
+  --background-2: #eaeef7;
+  --foreground: #1b2236;
+  --surface: #ffffff;
+  --surface-2: #f3f6fd;
+  --surface-border: rgba(27, 34, 54, 0.1);
+  --muted: #586079;
+  --muted-2: #8b93a8;
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
+  --accent: #7c3aed;
+  --accent-2: #0284c7;
+  --ring: rgba(124, 58, 237, 0.4);
+  --success: #059669;
+  --danger: #dc2626;
+  --shadow-color: 224deg 35% 55%;
 
-  --aurora-1: rgba(224, 169, 154, 0.55);
-  --aurora-2: rgba(192, 132, 111, 0.4);
-  --aurora-3: rgba(244, 233, 228, 0.6);
+  --aurora-1: rgba(99, 102, 241, 0.2);
+  --aurora-2: rgba(139, 92, 246, 0.16);
+  --aurora-3: rgba(14, 165, 233, 0.18);
 }
 
 /* ── Paleta semántica (Noche) ───────────────────────────────── */
 .dark {
-  --background: #141010;
-  --background-2: #1b1513;
-  --foreground: #f3e8e3;
-  --surface: #1c1715;
-  --surface-2: #241d1b;
+  --background: #0a0d17;
+  --background-2: #0f1422;
+  --foreground: #e9edf7;
+  --surface: #131929;
+  --surface-2: #1a2133;
   --surface-border: rgba(255, 255, 255, 0.08);
-  --muted: #b59a92;
-  --muted-2: #8c736b;
-  --primary: #e8b4a6;
-  --primary-foreground: #2a1c18;
-  --accent: #d49a89;
-  --accent-2: #c0846f;
-  --ring: rgba(232, 180, 166, 0.45);
-  --success: #6fc6a1;
-  --danger: #e58880;
-  --shadow-color: 12deg 30% 4%;
+  --muted: #97a2bb;
+  --muted-2: #5c6680;
+  --primary: #818cf8;
+  --primary-foreground: #ffffff;
+  --accent: #a78bfa;
+  --accent-2: #38bdf8;
+  --ring: rgba(167, 139, 250, 0.45);
+  --success: #34d399;
+  --danger: #fb7185;
+  --shadow-color: 224deg 60% 3%;
 
-  --aurora-1: rgba(192, 132, 111, 0.32);
-  --aurora-2: rgba(110, 74, 64, 0.4);
-  --aurora-3: rgba(232, 180, 166, 0.18);
+  --aurora-1: rgba(99, 102, 241, 0.3);
+  --aurora-2: rgba(139, 92, 246, 0.26);
+  --aurora-3: rgba(56, 189, 248, 0.16);
 }
 
 /* ── Registro de tokens como utilidades Tailwind ────────────── */
@@ -131,14 +131,14 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(120deg, var(--accent-2), var(--accent), var(--primary));
+  background: linear-gradient(120deg, #6366f1, #8b5cf6, #0ea5e9);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .gradient-primary {
-  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 55%, var(--primary) 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #38bdf8 100%);
 }
 
 .shadow-soft {
