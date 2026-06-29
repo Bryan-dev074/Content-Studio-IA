@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* Habilita el modo oscuro por clase (compatible con next-themes). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Paleta semántica (Día) ─────────────────────────────────── */
+:root {
+  --background: #f4e9e4;
+  --background-2: #efddd6;
+  --foreground: #3a2722;
+  --surface: #fffaf8;
+  --surface-2: #ffffff;
+  --surface-border: rgba(94, 58, 50, 0.12);
+  --muted: #8a6b62;
+  --muted-2: #a98a80;
+  --primary: #6b4a40;
+  --primary-foreground: #fdf6f3;
+  --accent: #c0846f;
+  --accent-2: #e0a99a;
+  --ring: rgba(192, 132, 111, 0.5);
+  --success: #4f9d7e;
+  --danger: #c4564f;
+  --shadow-color: 30deg 30% 60%;
+
+  --aurora-1: rgba(224, 169, 154, 0.55);
+  --aurora-2: rgba(192, 132, 111, 0.4);
+  --aurora-3: rgba(244, 233, 228, 0.6);
+}
+
+/* ── Paleta semántica (Noche) ───────────────────────────────── */
+.dark {
+  --background: #141010;
+  --background-2: #1b1513;
+  --foreground: #f3e8e3;
+  --surface: #1c1715;
+  --surface-2: #241d1b;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --muted: #b59a92;
+  --muted-2: #8c736b;
+  --primary: #e8b4a6;
+  --primary-foreground: #2a1c18;
+  --accent: #d49a89;
+  --accent-2: #c0846f;
+  --ring: rgba(232, 180, 166, 0.45);
+  --success: #6fc6a1;
+  --danger: #e58880;
+  --shadow-color: 12deg 30% 4%;
+
+  --aurora-1: rgba(192, 132, 111, 0.32);
+  --aurora-2: rgba(110, 74, 64, 0.4);
+  --aurora-3: rgba(232, 180, 166, 0.18);
+}
+
+/* ── Registro de tokens como utilidades Tailwind ────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-background-2: var(--background-2);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--surface-border);
+  --color-muted: var(--muted);
+  --color-muted-2: var(--muted-2);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+* {
+  border-color: var(--surface-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--primary-foreground);
+}
+
+/* Scrollbar estilizada */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--muted-2);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  background-clip: content-box;
+}
+
+/* ── Utilidades de marca ────────────────────────────────────── */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.glass {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--surface-border);
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, var(--accent-2), var(--accent), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 55%, var(--primary) 100%);
+}
+
+.shadow-soft {
+  box-shadow:
+    0 1px 2px hsl(var(--shadow-color) / 0.4),
+    0 8px 24px -8px hsl(var(--shadow-color) / 0.45);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 0 1px var(--surface-border), 0 18px 50px -16px var(--accent);
+}
+
+/* Brillo recorriendo botones */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.shimmer:hover::after {
+  transform: translateX(120%);
+}
+
+/* ── Fondo aurora animado ───────────────────────────────────── */
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.9;
+  will-change: transform;
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(6vw, 4vh) scale(1.12); }
+  66% { transform: translate(-4vw, -3vh) scale(0.95); }
+}
+@keyframes floatB {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-7vw, 5vh) scale(1.15); }
+}
+@keyframes floatC {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(5vw, -6vh) scale(1.08); }
+  80% { transform: translate(-3vw, 3vh) scale(0.92); }
+}
+
+.animate-floatA { animation: floatA 22s ease-in-out infinite; }
+.animate-floatB { animation: floatB 26s ease-in-out infinite; }
+.animate-floatC { animation: floatC 30s ease-in-out infinite; }
+
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spinSlow 1.1s linear infinite; }
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.animate-pulse-soft { animation: pulseSoft 1.8s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-floatA, .animate-floatB, .animate-floatC { animation: none; }
+}
