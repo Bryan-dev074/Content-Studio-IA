@@ -106,12 +106,33 @@ export interface GenerateRequest {
   products: ProductInput[];
   niche: string;
   productionMode: ProductionMode;
+  /** Duración objetivo del anuncio en segundos (0 / undefined = automático). */
+  durationSec?: number;
+  /** Tono de voz deseado (clave del selector). */
+  tone?: string;
   extraPrompt?: string;
   /** Descripción textual del video de referencia (fallback si no se sube video). */
   referenceNotes?: string;
   /** Archivo subido a Gemini Files API. */
   videoFileUri?: string;
   videoMimeType?: string;
+}
+
+/** Petición para regenerar UNA sola escena con un enfoque concreto. */
+export interface RegenerateSceneRequest {
+  productionMode: ProductionMode;
+  sceneId: string;
+  /** Enfoque/instrucción elegida para esa escena. */
+  focus: string;
+  /** Contexto del guion para mantener coherencia. */
+  title: string;
+  summary: string;
+  outline: { id: string; label: string; timecode: string; roll?: string }[];
+  targetScene: Scene;
+  /** Brief opcional para fidelidad (producto, nicho, tono). */
+  niche?: string;
+  tone?: string;
+  products?: ProductInput[];
 }
 
 export interface UploadResponse {

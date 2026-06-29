@@ -5,6 +5,7 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/api/generate": ["./content/**/*", "./logo/**/*"],
     "/api/refine": ["./content/**/*"],
+    "/api/regenerate-scene": ["./content/**/*", "./logo/**/*"],
   },
 };
 

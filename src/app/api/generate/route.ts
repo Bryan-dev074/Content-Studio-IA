@@ -22,6 +22,8 @@ export async function POST(req: Request) {
       products,
       niche: body.niche ?? "",
       productionMode: body.productionMode === "hibrido" ? "hibrido" : "ia",
+      durationSec: body.durationSec,
+      tone: body.tone,
       extraPrompt: body.extraPrompt,
       referenceNotes: body.referenceNotes,
       videoFileUri: body.videoFileUri,

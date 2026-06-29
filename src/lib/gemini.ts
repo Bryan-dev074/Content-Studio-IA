@@ -10,6 +10,8 @@ import {
   buildUserContent,
   buildRefineSystemInstruction,
   buildRefineUserContent,
+  buildSceneRegenSystemInstruction,
+  buildSceneRegenUserContent,
 } from "./system-prompt";
 import { loadBrandLogo } from "./brand-asset";
 import { extractJson, sleep } from "./utils";
@@ -17,6 +19,8 @@ import type {
   GenerateRequest,
   RefineRequest,
   RefineResponse,
+  RegenerateSceneRequest,
+  Scene,
   ScriptResult,
   UploadResponse,
 } from "./types";
@@ -214,4 +218,62 @@ export async function refinePrompt(
   }
 
   return extractJson<RefineResponse>(text);
+}
+
+// ── Regeneración de una escena ───────────────────────────────
+
+export async function regenerateScene(
+  req: RegenerateSceneRequest,
+): Promise<Scene> {
+  const ai = getClient();
+  const systemInstruction = await buildSceneRegenSystemInstruction(
+    req.productionMode,
+  );
+  const parts: Array<Record<string, unknown>> = [
+    { text: buildSceneRegenUserContent(req) },
+  ];
+
+  for (const p of req.products ?? []) {
+    if (p.imageFileUri && p.imageMimeType) {
+      parts.push({
+        text: `Imagen real del producto "${p.name?.trim() || "producto"}" (referencia fiel):`,
+      });
+      parts.push({
+        fileData: { fileUri: p.imageFileUri, mimeType: p.imageMimeType },
+      });
+    }
+  }
+
+  const logo = await loadBrandLogo();
+  if (logo) {
+    parts.push({
+      text: "Logotipo de ElaBela proporcionado. Úsalo SOLO si esta escena es el Gancho / primer clip con imagen 0c, ubicándolo de forma natural en la escena (no lo describas en detalle):",
+    });
+    parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
+  }
+
+  const response = await generateWithRetry(ai, {
+    model: getModel(),
+    contents: [{ role: "user", parts }],
+    config: {
+      systemInstruction,
+      responseMimeType: "application/json",
+      temperature: 0.9,
+      topP: 0.95,
+      maxOutputTokens: 8192,
+    },
+  });
+
+  const text = response.text;
+  if (!text) {
+    throw new Error("El modelo no devolvió la escena regenerada.");
+  }
+
+  const scene = extractJson<Scene>(text);
+  scene.id = req.sceneId;
+  scene.prompts = (scene.prompts ?? []).map((p, j) => ({
+    ...p,
+    id: p.id || `${req.sceneId}-p${j + 1}`,
+  }));
+  return scene;
 }

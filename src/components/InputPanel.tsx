@@ -44,6 +44,8 @@ export function InputPanel({
   const [products, setProducts] = useState<ProductInput[]>([makeProduct()]);
   const [niche, setNiche] = useState("");
   const [mode, setMode] = useState<ProductionMode>("ia");
+  const [durationSec, setDurationSec] = useState(0); // 0 = auto
+  const [tone, setTone] = useState("");
   const [extraPrompt, setExtraPrompt] = useState("");
   const [referenceNotes, setReferenceNotes] = useState("");
   const [upload, setUpload] = useState<UploadResponse | null>(null);
@@ -59,12 +61,30 @@ export function InputPanel({
       products: products.filter((p) => p.name.trim() || p.benefits.trim()),
       niche: niche.trim(),
       productionMode: mode,
+      durationSec: durationSec || undefined,
+      tone: tone || undefined,
       extraPrompt: extraPrompt.trim() || undefined,
       referenceNotes: referenceNotes.trim() || undefined,
       videoFileUri: upload?.fileUri,
       videoMimeType: upload?.mimeType,
     });
   };
+
+  const durationOpts = [
+    { label: t.durationAuto, value: 0 },
+    { label: "15s", value: 15 },
+    { label: "20s", value: 20 },
+    { label: "30s", value: 30 },
+    { label: "45s", value: 45 },
+  ];
+
+  const chipCls = (active: boolean) =>
+    cn(
+      "rounded-xl border px-3.5 py-2 text-sm font-medium transition-all",
+      active
+        ? "gradient-primary border-transparent text-primary-foreground shadow-soft"
+        : "border-border bg-surface/60 text-muted hover:border-accent/50 hover:text-foreground",
+    );
 
   return (
     <motion.section
@@ -123,6 +143,39 @@ export function InputPanel({
             },
           ]}
         />
+      </motion.div>
+
+      <motion.div variants={fieldVariants} className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label>{t.duration}</Label>
+          <div className="flex flex-wrap gap-2">
+            {durationOpts.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setDurationSec(o.value)}
+                className={chipCls(durationSec === o.value)}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <Label>{t.tone}</Label>
+          <div className="flex flex-wrap gap-2">
+            {t.toneOptions.map((o) => (
+              <button
+                key={o}
+                type="button"
+                onClick={() => setTone(tone === o ? "" : o)}
+                className={chipCls(tone === o)}
+              >
+                {o}
+              </button>
+            ))}
+          </div>
+        </div>
       </motion.div>
 
       <motion.div variants={fieldVariants}>

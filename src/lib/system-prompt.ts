@@ -1,4 +1,9 @@
-import type { GenerateRequest, ProductionMode, RefineRequest } from "./types";
+import type {
+  GenerateRequest,
+  ProductionMode,
+  RefineRequest,
+  RegenerateSceneRequest,
+} from "./types";
 import { loadContextDocs } from "./context";
 
 /**
@@ -191,6 +196,15 @@ export function buildUserContent(req: GenerateRequest): string {
     }`,
   );
 
+  if (req.durationSec && req.durationSec > 0) {
+    lines.push(
+      `- Duración objetivo del anuncio: ~${req.durationSec}s. Ajusta el número de escenas y los timecodes para que sumen esa duración total de forma continua, sin huecos ni solapamientos.`,
+    );
+  }
+  if (req.tone?.trim()) {
+    lines.push(`- Tono de voz de la locución: ${req.tone.trim()}.`);
+  }
+
   if (req.extraPrompt?.trim()) {
     lines.push(`- Instrucciones extra del usuario: ${req.extraPrompt.trim()}`);
   }
@@ -256,4 +270,96 @@ export function buildRefineUserContent(req: RefineRequest): string {
     "CAMBIO QUE PIDE EL USUARIO:",
     req.instruction,
   ].join("\n");
+}
+
+// ── Regeneración de UNA escena ───────────────────────────────
+
+const SCENE_CONTRACT = `
+Devuelve EXCLUSIVAMENTE un objeto JSON de UNA escena (sin texto extra ni fences),
+con texto legible en español (es) y portugués de Brasil (pt):
+{
+  "id": "<mismo id de la escena>",
+  "label": { "es": "...", "pt": "..." },
+  "timecode": "0s – 3s",
+  "roll": "A-Roll" | "B-Roll",   // SOLO modo hibrido; omitir en modo ia
+  "audio": { "es": "locución limpia para ElevenLabs", "pt": "..." },
+  "visual": { "es": "plano, ángulo, movimiento y acción exactos", "pt": "..." },
+  "acting": { "es": "SOLO hibrido A-Roll: tono, gestos", "pt": "..." },
+  "sfx": { "es": "SFX / silencios", "pt": "..." },
+  "prompts": [
+    {
+      "id": "<id>",
+      "kind": "imagen-0c" | "animacion" | "fondo-chroma" | "lipsync",
+      "title": { "es": "...", "pt": "..." },
+      "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
+      "content": { "es": "PROMPT ULTRA-DETALLADO", "pt": "..." }
+    }
+  ]
+}
+`.trim();
+
+export async function buildSceneRegenSystemInstruction(
+  productionMode: ProductionMode,
+): Promise<string> {
+  const ctx = await loadContextDocs(productionMode);
+  const modeNote =
+    productionMode === "hibrido"
+      ? "Modo HÍBRIDO: respeta A-Roll/B-Roll, el campo 'roll', 'acting' en A-Roll y 'fondo-chroma' donde aplique."
+      : "Modo 100% IA: video maestro con lipsync (Seedance 2.0 mini) y B-Roll con el mejor modelo.";
+
+  return `
+Eres un Director Creativo experto en anuncios de cosmética. Vas a REGENERAR UNA
+SOLA ESCENA de un guion ya existente, manteniendo total coherencia con el resto.
+
+Base de conocimiento y reglas internas:
+${ctx.combined}
+
+${modeNote}
+
+REGLAS DE LA REGENERACIÓN:
+- Devuelve SOLO la escena pedida, con el MISMO "id" y, por defecto, el MISMO
+  "timecode" (cámbialo solo si el enfoque lo exige, manteniéndolo coherente con
+  las escenas vecinas).
+- Mantén la CONTINUIDAD con la escena anterior y la siguiente (que el corte fluya
+  natural; misma identidad de personaje, producto y estilo visual).
+- Aplica con fuerza el ENFOQUE que pide el usuario para esta escena.
+- Prompts de imagen 0c para NanoBanana Pro (Flow): EXTREMADAMENTE detallados.
+  Incluye SIEMPRE salvaguardas: el producto NO se deforma ni cambia de etiqueta,
+  logo/texto legibles, rostro/identidad consistentes, lipsync perfecto donde
+  aplique, formato vertical 9:16.
+- Si esta escena es el Gancho / primer clip, el prompt de imagen 0c DEBE indicar
+  que se use el logotipo de ElaBela PROPORCIONADO, ubicado de forma natural en la
+  escena (cuadro de fondo, empaque, cartel...), sin describirlo en detalle.
+- Respeta los modelos y costos de la matriz.
+
+${SCENE_CONTRACT}
+`.trim();
+}
+
+export function buildSceneRegenUserContent(req: RegenerateSceneRequest): string {
+  const lines = [
+    `Guion: "${req.title}". Idea central: ${req.summary}.`,
+    `Modo: ${req.productionMode === "hibrido" ? "Híbrido" : "100% IA"}.`,
+    req.niche ? `Nicho / público: ${req.niche}.` : "",
+    req.tone ? `Tono de voz: ${req.tone}.` : "",
+    "",
+    "Estructura completa del guion (para mantener coherencia):",
+    ...req.outline.map(
+      (s, i) =>
+        `  ${i + 1}. [${s.timecode}] ${s.label}${s.roll ? ` (${s.roll})` : ""}${
+          s.id === req.sceneId ? "   <-- ESTA es la escena a regenerar" : ""
+        }`,
+    ),
+    "",
+    "Escena ACTUAL a regenerar (JSON):",
+    "```json",
+    JSON.stringify(req.targetScene, null, 2),
+    "```",
+    "",
+    `ENFOQUE pedido para esta escena: ${req.focus}`,
+  ];
+  if (req.products?.some((p) => p.imageFileUri)) {
+    lines.push("", "Se adjuntan imágenes reales de productos como referencia fiel.");
+  }
+  return lines.filter(Boolean).join("\n");
 }

@@ -10,7 +10,14 @@ import { InputPanel } from "@/components/InputPanel";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { demoScript, demoScriptHybrid } from "@/lib/demo";
-import type { GenerateRequest, ProductionMode, ScriptResult } from "@/lib/types";
+import type {
+  GenerateRequest,
+  ProductInput,
+  ProductionMode,
+  ScriptResult,
+} from "@/lib/types";
+
+type Brief = { niche?: string; tone?: string; products?: ProductInput[] };
 
 export default function Home() {
   const { t } = useI18n();
@@ -18,6 +25,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isExample, setIsExample] = useState(false);
+  const [brief, setBrief] = useState<Brief | undefined>(undefined);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const scrollToResults = () => {
@@ -32,6 +40,7 @@ export default function Home() {
     setError("");
     setLoading(false);
     setIsExample(true);
+    setBrief(undefined);
     setResult(mode === "hibrido" ? demoScriptHybrid : demoScript);
     scrollToResults();
   };
@@ -40,6 +49,7 @@ export default function Home() {
     setLoading(true);
     setError("");
     setIsExample(false);
+    setBrief({ niche: req.niche, tone: req.tone, products: req.products });
     scrollToResults();
 
     try {
@@ -96,6 +106,7 @@ export default function Home() {
               loading={loading}
               error={error}
               example={isExample}
+              brief={brief}
             />
           </div>
         </div>

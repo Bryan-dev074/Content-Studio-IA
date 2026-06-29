@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { PromptCard } from "./PromptCard";
-import { AudioIcon, CameraIcon } from "./icons";
+import {
+  RegenerateSceneModal,
+  type RegenContext,
+} from "./RegenerateSceneModal";
+import { AudioIcon, CameraIcon, RefreshIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { cn } from "@/lib/utils";
 import type { Lang, Localized, ProductionMode, Scene } from "@/lib/types";
@@ -13,14 +18,19 @@ export function SceneCard({
   lang,
   productionMode,
   onUpdatePrompt,
+  regenContext,
+  onRegenerated,
 }: {
   scene: Scene;
   index: number;
   lang: Lang;
   productionMode: ProductionMode;
   onUpdatePrompt: (promptId: string, content: Localized) => void;
+  regenContext: RegenContext;
+  onRegenerated: (scene: Scene) => void;
 }) {
   const { t } = useI18n();
+  const [regenOpen, setRegenOpen] = useState(false);
 
   return (
     <motion.article
@@ -41,18 +51,28 @@ export function SceneCard({
         <span className="font-serif text-lg font-semibold text-foreground">
           {scene.label[lang]}
         </span>
-        {scene.roll && (
-          <span
-            className={cn(
-              "ml-auto rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
-              scene.roll === "A-Roll"
-                ? "bg-primary/15 text-primary"
-                : "bg-accent/15 text-accent",
-            )}
+        <div className="ml-auto flex items-center gap-2">
+          {scene.roll && (
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider",
+                scene.roll === "A-Roll"
+                  ? "bg-primary/15 text-primary"
+                  : "bg-accent/15 text-accent",
+              )}
+            >
+              {scene.roll}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => setRegenOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent transition-colors hover:bg-accent/20"
           >
-            {scene.roll}
-          </span>
-        )}
+            <RefreshIcon className="h-3.5 w-3.5" />
+            {t.regenScene}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4 p-5">
@@ -122,6 +142,16 @@ export function SceneCard({
           </div>
         )}
       </div>
+
+      <RegenerateSceneModal
+        open={regenOpen}
+        onClose={() => setRegenOpen(false)}
+        scene={scene}
+        lang={lang}
+        productionMode={productionMode}
+        context={regenContext}
+        onRegenerated={onRegenerated}
+      />
     </motion.article>
   );
 }

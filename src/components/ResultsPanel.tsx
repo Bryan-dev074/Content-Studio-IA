@@ -13,7 +13,13 @@ import { useI18n } from "./providers/I18nProvider";
 import { scriptToMarkdown } from "@/lib/export";
 import { LANGS } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import type { Lang, Localized, ScriptResult } from "@/lib/types";
+import type {
+  Lang,
+  Localized,
+  ProductInput,
+  Scene,
+  ScriptResult,
+} from "@/lib/types";
 
 const LAYER_CLS: Record<string, string> = {
   visual: "bg-accent/15 text-accent",
@@ -26,11 +32,13 @@ export function ResultsPanel({
   loading,
   error,
   example = false,
+  brief,
 }: {
   result: ScriptResult | null;
   loading: boolean;
   error: string;
   example?: boolean;
+  brief?: { niche?: string; tone?: string; products?: ProductInput[] };
 }) {
   const { t, lang: uiLang } = useI18n();
   const [data, setData] = useState<ScriptResult | null>(null);
@@ -63,6 +71,19 @@ export function ResultsPanel({
                       p.id !== promptId ? p : { ...p, content },
                     ),
                   },
+            ),
+          },
+    );
+  };
+
+  const replaceScene = (sceneId: string, newScene: Scene) => {
+    setData((prev) =>
+      !prev
+        ? prev
+        : {
+            ...prev,
+            scenes: prev.scenes.map((s) =>
+              s.id === sceneId ? { ...newScene, id: sceneId } : s,
             ),
           },
     );
@@ -254,6 +275,20 @@ export function ResultsPanel({
             onUpdatePrompt={(promptId, content) =>
               updatePrompt(scene.id, promptId, content)
             }
+            regenContext={{
+              title: data.title.es,
+              summary: data.summary.es,
+              outline: data.scenes.map((s) => ({
+                id: s.id,
+                label: s.label.es,
+                timecode: s.timecode,
+                roll: s.roll,
+              })),
+              niche: brief?.niche,
+              tone: brief?.tone,
+              products: brief?.products,
+            }}
+            onRegenerated={(sc) => replaceScene(scene.id, sc)}
           />
         ))}
       </div>

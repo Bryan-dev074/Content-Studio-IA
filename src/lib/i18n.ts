@@ -60,6 +60,34 @@ export const dict = {
     modeHybrid: "Híbrido",
     modeHybridDesc: "Grabación local + B-Roll IA",
 
+    duration: "Duración objetivo",
+    durationAuto: "Auto",
+    tone: "Tono de voz",
+    toneOptions: [
+      "Amiga cercana (UGC)",
+      "Experta / dermo",
+      "Lujo premium",
+      "Energética / juvenil",
+    ],
+
+    regenScene: "Regenerar escena",
+    regenSceneTitle: "Regenerar esta escena",
+    regenSceneHint:
+      "Elige un enfoque. Solo se regenera esta escena; el resto del guion se mantiene.",
+    regenApply: "Regenerar escena",
+    regenWorking: "Regenerando…",
+    sceneFocusChips: [
+      "Más emocional",
+      "Más enfocado en el producto",
+      "Cambiar el gancho",
+      "Más dinámico / rápido",
+      "Antes vs Después",
+      "Testimonio / UGC",
+      "Más educativo",
+      "Más sensorial (texturas)",
+      "Otro ángulo de cámara",
+    ],
+
     referenceNotes: "Notas del video (opcional)",
     referenceNotesPh:
       "Si no subes video, describe el anuncio ganador: gancho, ritmo, tono…",
@@ -188,6 +216,34 @@ export const dict = {
     modeIADesc: "Lipsync + B-Roll",
     modeHybrid: "Híbrido",
     modeHybridDesc: "Gravação local + B-Roll IA",
+
+    duration: "Duração alvo",
+    durationAuto: "Auto",
+    tone: "Tom de voz",
+    toneOptions: [
+      "Amiga próxima (UGC)",
+      "Especialista / dermo",
+      "Luxo premium",
+      "Enérgica / jovem",
+    ],
+
+    regenScene: "Regerar cena",
+    regenSceneTitle: "Regerar esta cena",
+    regenSceneHint:
+      "Escolha um enfoque. Só esta cena é regerada; o resto do roteiro se mantém.",
+    regenApply: "Regerar cena",
+    regenWorking: "Regerando…",
+    sceneFocusChips: [
+      "Mais emocional",
+      "Mais focado no produto",
+      "Mudar o gancho",
+      "Mais dinâmico / rápido",
+      "Antes vs Depois",
+      "Depoimento / UGC",
+      "Mais educativo",
+      "Mais sensorial (texturas)",
+      "Outro ângulo de câmera",
+    ],
 
     referenceNotes: "Notas do vídeo (opcional)",
     referenceNotesPh:
