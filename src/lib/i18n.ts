@@ -41,6 +41,19 @@ export const dict = {
     niche: "Nicho / público",
     nichePh: "Ej. pieles maduras que buscan luminosidad",
 
+    products: "Productos a promocionar",
+    productsHint: "Agrega uno o varios productos para el guion.",
+    addProduct: "Añadir otro producto",
+    removeProduct: "Quitar producto",
+    productLabel: "Producto",
+    productImage: "Foto del producto (opcional)",
+    productImageUploading: "Subiendo…",
+    productImageReady: "Foto lista",
+
+    seeExample: "Ver ejemplo",
+    exampleBadge: "Ejemplo de demostración",
+    createdBy: "Creado por",
+
     mode: "Modo de producción",
     modeIA: "100% IA",
     modeIADesc: "Lipsync + B-Roll",
@@ -150,6 +163,19 @@ export const dict = {
     benefitsPh: "Ex. hidrata 24h, ilumina, reduz manchas…",
     niche: "Nicho / público",
     nichePh: "Ex. peles maduras que buscam luminosidade",
+
+    products: "Produtos a promover",
+    productsHint: "Adicione um ou vários produtos para o roteiro.",
+    addProduct: "Adicionar outro produto",
+    removeProduct: "Remover produto",
+    productLabel: "Produto",
+    productImage: "Foto do produto (opcional)",
+    productImageUploading: "Enviando…",
+    productImageReady: "Foto pronta",
+
+    seeExample: "Ver exemplo",
+    exampleBadge: "Exemplo de demonstração",
+    createdBy: "Criado por",
 
     mode: "Modo de produção",
     modeIA: "100% IA",

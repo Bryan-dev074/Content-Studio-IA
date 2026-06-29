@@ -4,10 +4,12 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { CatLogo } from "@/components/CatLogo";
+import { GithubIcon } from "@/components/icons";
 import { Background } from "@/components/Background";
 import { InputPanel } from "@/components/InputPanel";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { useI18n } from "@/components/providers/I18nProvider";
+import { demoScript } from "@/lib/demo";
 import type { GenerateRequest, ScriptResult } from "@/lib/types";
 
 export default function Home() {
@@ -15,16 +17,30 @@ export default function Home() {
   const [result, setResult] = useState<ScriptResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isExample, setIsExample] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const generate = async (req: GenerateRequest) => {
-    setLoading(true);
-    setError("");
+  const scrollToResults = () => {
     setTimeout(() => {
       if (window.innerWidth < 1024) {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 60);
+  };
+
+  const showExample = () => {
+    setError("");
+    setLoading(false);
+    setIsExample(true);
+    setResult(demoScript);
+    scrollToResults();
+  };
+
+  const generate = async (req: GenerateRequest) => {
+    setLoading(true);
+    setError("");
+    setIsExample(false);
+    scrollToResults();
 
     try {
       const res = await fetch("/api/generate", {
@@ -68,20 +84,41 @@ export default function Home() {
         {/* Layout principal */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,460px)_1fr]">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <InputPanel onGenerate={generate} loading={loading} />
+            <InputPanel
+              onGenerate={generate}
+              onExample={showExample}
+              loading={loading}
+            />
           </div>
           <div ref={resultsRef} className="scroll-mt-24">
-            <ResultsPanel result={result} loading={loading} error={error} />
+            <ResultsPanel
+              result={result}
+              loading={loading}
+              error={error}
+              example={isExample}
+            />
           </div>
         </div>
       </main>
 
-      <footer className="flex items-center justify-center gap-2 border-t border-border py-8 text-center text-sm text-muted">
-        <CatLogo className="h-5 w-5" animated={false} />
-        <p>
-          <span className="font-serif text-foreground">{t.appName}</span> ·{" "}
-          {t.footerNote}
-        </p>
+      <footer className="flex flex-col items-center justify-center gap-3 border-t border-border py-8 text-center text-sm text-muted">
+        <div className="flex items-center gap-2">
+          <CatLogo className="h-5 w-5" />
+          <span>
+            <span className="font-serif text-foreground">{t.appName}</span> ·{" "}
+            {t.footerNote}
+          </span>
+        </div>
+        <a
+          href="https://github.com/Bryan-dev074"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 font-medium text-foreground transition-all hover:border-accent/50 hover:shadow-soft"
+        >
+          <GithubIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
+          {t.createdBy}{" "}
+          <span className="text-gradient font-semibold">Bryan-dev074</span>
+        </a>
       </footer>
     </>
   );

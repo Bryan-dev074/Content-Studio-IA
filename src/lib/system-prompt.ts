@@ -38,7 +38,7 @@ las dos versiones de idioma { "es": "...", "pt": "..." } (pt = portugués de Bra
           "id": "s1-img",
           "kind": "imagen-0c" | "animacion" | "fondo-chroma" | "lipsync",
           "title": { "es": "Imagen Base 0c — Gancho", "pt": "..." },
-          "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "nanobanana pro / GPT",
+          "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
           "content": { "es": "PROMPT ULTRA-DETALLADO", "pt": "PROMPT ULTRA-DETALHADO" }
         }
       ]
@@ -99,11 +99,14 @@ ${ctx.combined}
 ${modeBlock}
 
 ═══════════════ REGLAS DE ORO (INQUEBRANTABLES) ═══════════════
-1. MARCA VISUAL: el prompt de la imagen base (0c) del PRIMER clip / Gancho
-   DEBE incluir explícitamente, de forma visible pero elegante e integrada, el
-   logotipo de ElaBela (wordmark serif 'Ela, Bela' con un corazoncito y la
-   palabra 'glow' debajo, en tono marrón cacao), tal como se describe en el doc
-   de marca. Ningún guion se entrega sin esto.
+1. MARCA VISUAL: el prompt de la imagen base (0c) del PRIMER clip / Gancho DEBE
+   DECIR EXPLÍCITAMENTE que se incluya el logotipo de ElaBela en la escena, de
+   forma SUTIL / DISCRETA o de fondo (impreso en el empaque del producto, o en un
+   cartel / placa / etiqueta / espejo del entorno, ligeramente desenfocado), sin
+   tapar el sujeto ni saturar. Descríbelo (wordmark serif 'Ela, Bela' con un
+   corazoncito y 'glow' debajo, marrón cacao) para que NanoBanana Pro lo
+   reproduzca bien. Recibes el archivo del logo solo como referencia visual.
+   Ningún guion se entrega sin esta instrucción del logo en el frame inicial.
 2. MARCA AUDITIVA: la locución DEBE mencionar "ElaBela" de forma orgánica, en el
    medio o al final como CTA. Nunca forzado.
 
@@ -114,11 +117,13 @@ ${modeBlock}
   detalle, plano medio...), ÁNGULO de cámara, MOVIMIENTO (push-in, dolly, whip
   pan, snap zoom...) y la acción exacta de ese segundo a ese segundo.
 - En "audio" escribe la locución limpia y natural, optimizada para ElevenLabs.
-- Los prompts de IMAGEN 0c deben ser ULTRA-DETALLADOS e impecables: sujeto,
-  composición y encuadre, lente/cámara virtual, iluminación, paleta de color,
-  textura y materiales, fondo/props, estado de ánimo, calidad ("hyperrealistic,
-  8k, photoreal skin texture", formato vertical 9:16). Los prompts de ANIMACIÓN
-  describen el movimiento físico y de cámara para el modelo image-to-video.
+- Los prompts de IMAGEN 0c se generan con **NanoBanana Pro en Google Flow**:
+  redáctalos en lenguaje natural fotográfico, ULTRA-DETALLADOS e impecables —
+  sujeto, composición y encuadre, lente/cámara virtual, iluminación, paleta de
+  color, textura y materiales, fondo/props, estado de ánimo y calidad
+  ("hyperrealistic, 8k, photoreal skin texture", formato vertical 9:16). Los
+  prompts de ANIMACIÓN describen el movimiento físico y de cámara para el modelo
+  image-to-video.
 - Respeta los costos: usa los modelos y precios EXACTOS de la matriz. La suma de
   "highfieldTotal" NO puede pasar de 100c y "omniFlashTotal" NO puede pasar de
   38c. Calcula los totales tú mismo y cuádralos con las filas.
@@ -134,17 +139,40 @@ ${JSON_CONTRACT}
 }
 
 export function buildUserContent(req: GenerateRequest): string {
-  const lines = [
-    "Genera el guion para este caso:",
-    `- Producto: ${req.productName || "(no especificado)"}`,
-    `- Beneficios clave: ${req.benefits || "(no especificados)"}`,
-    `- Nicho / público: ${req.niche || "(no especificado)"}`,
+  const lines: string[] = ["Genera el guion para este caso:"];
+
+  const products = (req.products ?? []).filter((p) => p.name?.trim() || p.benefits?.trim());
+
+  if (products.length <= 1) {
+    const p = products[0];
+    lines.push(`- Producto: ${p?.name?.trim() || "(no especificado)"}`);
+    lines.push(`- Beneficios clave: ${p?.benefits?.trim() || "(no especificados)"}`);
+    if (p?.imageFileUri) {
+      lines.push(
+        "  (Se adjunta una IMAGEN REAL de este producto: úsala como referencia fiel para describir el producto en los prompts de imagen 0c.)",
+      );
+    }
+  } else {
+    lines.push(
+      `- Productos a promocionar (${products.length}). Intégralos TODOS de forma coherente en el mismo anuncio (puente entre ellos, o rutina que los combine):`,
+    );
+    products.forEach((p, i) => {
+      lines.push(
+        `  ${i + 1}. ${p.name?.trim() || "(sin nombre)"}${
+          p.benefits?.trim() ? ` — Beneficios: ${p.benefits.trim()}` : ""
+        }${p.imageFileUri ? " (imagen real adjunta como referencia)" : ""}`,
+      );
+    });
+  }
+
+  lines.push(`- Nicho / público: ${req.niche || "(no especificado)"}`);
+  lines.push(
     `- Modo de producción: ${
       req.productionMode === "hibrido"
         ? "Híbrido (grabación local + B-Roll IA)"
         : "100% IA (Lipsync + B-Roll)"
     }`,
-  ];
+  );
 
   if (req.extraPrompt?.trim()) {
     lines.push(`- Instrucciones extra del usuario: ${req.extraPrompt.trim()}`);

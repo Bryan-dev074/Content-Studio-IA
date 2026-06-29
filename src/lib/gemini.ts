@@ -147,12 +147,24 @@ export async function generateScript(
     });
   }
 
+  // Imágenes reales de los productos (si las hay) como referencia fiel.
+  for (const p of req.products ?? []) {
+    if (p.imageFileUri && p.imageMimeType) {
+      parts.push({
+        text: `Imagen real del producto "${p.name?.trim() || "producto"}" (úsala como referencia fiel para describirlo en los prompts de imagen 0c):`,
+      });
+      parts.push({
+        fileData: { fileUri: p.imageFileUri, mimeType: p.imageMimeType },
+      });
+    }
+  }
+
   // Referencia visual del logo de ElaBela (si está en /logo). Recurso interno
   // para la IA: debe aparecer en la imagen 0c del Gancho. No se muestra en la UI.
   const logo = await loadBrandLogo();
   if (logo) {
     parts.push({
-      text: "Referencia visual del LOGOTIPO de ElaBela. Debe aparecer de forma visible pero elegante en el prompt de la imagen 0c del Gancho:",
+      text: "REFERENCIA VISUAL del logotipo de ElaBela (solo para que sepas cómo es). El prompt de la imagen 0c del Gancho —que se generará con NanoBanana Pro en Flow— debe pedir que este logo aparezca de forma sutil/discreta o de fondo, integrado en la escena (en el empaque, un cartel, etiqueta o espejo), no como sticker encima:",
     });
     parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
   }

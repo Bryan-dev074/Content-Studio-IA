@@ -11,12 +11,13 @@ import path from "node:path";
  */
 const LOGO_DIR = path.join(process.cwd(), "logo");
 
+// Solo formatos fijos: el logo de marca es PNG/JPG/WEBP (los GIF se ignoran,
+// porque el GIF de esta carpeta es el gatito del proyecto, no la marca).
 const MIME_BY_EXT: Record<string, string> = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
-  ".gif": "image/gif",
 };
 
 export interface BrandImage {
@@ -36,7 +37,7 @@ export async function loadBrandLogo(): Promise<BrandImage | null> {
       .filter((f) => MIME_BY_EXT[path.extname(f).toLowerCase()])
       // Evita gifs animados pesados como referencia (preferimos imagen fija).
       .sort((a, b) => {
-        const score = (f: string) => (/ela|bela|logo/i.test(f) ? 0 : 1);
+        const score = (f: string) => (/ela|bela|glow|logo/i.test(f) ? 0 : 1);
         return score(a) - score(b);
       });
 

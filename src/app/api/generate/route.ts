@@ -8,17 +8,18 @@ export const maxDuration = 300;
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as GenerateRequest;
+    const products = Array.isArray(body.products) ? body.products : [];
+    const hasProduct = products.some((p) => p.name?.trim());
 
-    if (!body.productName?.trim() && !body.videoFileUri && !body.referenceNotes?.trim()) {
+    if (!hasProduct && !body.videoFileUri && !body.referenceNotes?.trim()) {
       return NextResponse.json(
-        { error: "Falta información: indica al menos el producto o el video." },
+        { error: "Falta información: indica al menos un producto o el video." },
         { status: 400 },
       );
     }
 
     const result = await generateScript({
-      productName: body.productName ?? "",
-      benefits: body.benefits ?? "",
+      products,
       niche: body.niche ?? "",
       productionMode: body.productionMode === "hibrido" ? "hibrido" : "ia",
       extraPrompt: body.extraPrompt,

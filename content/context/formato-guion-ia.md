@@ -12,7 +12,7 @@ Formato del Guion (Enfoque 100% IA):
    * **Texto para Locución:** Redacta el guion de voz limpio y optimizado para ser generado externamente en **ElevenLabs**.
 
    * **Para el Video Maestro (Lipsync - Seedance 2.0 mini):**
-     - **Prompt de Imagen Base (0c - nanobanana pro / GPT):** Prompt ultra-detallado para generar el frame estático del avatar/modelo que va a hablar.
+     - **Prompt de Imagen Base (0c - NanoBanana Pro en Flow):** Prompt ultra-detallado para generar el frame estático del avatar/modelo que va a hablar.
      - **Instrucción de Lipsync:** Parámetros específicos para que Seedance 2.0 mini anime los labios del frame base usando el audio final de ElevenLabs. Si es necesario se puede crear 2 clips separados pero sin pasar del límite de créditos. Puede ser los primeros segundos y los últimos nomás en donde aparece con el lipsync.
 
    * **Para cada Clip de Soporte (dependiendo del análisis):**

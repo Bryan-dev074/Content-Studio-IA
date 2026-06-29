@@ -89,9 +89,21 @@ export interface ScriptResult {
 
 // ── Payloads de las rutas API ────────────────────────────────
 
-export interface GenerateRequest {
-  productName: string;
+/** Un producto a promocionar (se pueden cargar varios). */
+export interface ProductInput {
+  id: string;
+  name: string;
   benefits: string;
+  /** Imagen del producto subida a la Files API de Gemini (opcional). */
+  imageFileUri?: string;
+  imageMimeType?: string;
+  /** Nombre del archivo de imagen, para mostrar en la UI. */
+  imageName?: string;
+}
+
+export interface GenerateRequest {
+  /** Uno o más productos a promocionar. */
+  products: ProductInput[];
   niche: string;
   productionMode: ProductionMode;
   extraPrompt?: string;

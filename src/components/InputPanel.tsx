@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { VideoDropzone } from "./VideoDropzone";
+import { ProductList, makeProduct } from "./ProductList";
 import { SegmentedToggle } from "./SegmentedToggle";
-import { SparklesIcon, FilmIcon, CameraIcon } from "./icons";
+import { SparklesIcon, CameraIcon, PlayIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { cn } from "@/lib/utils";
 import type {
   GenerateRequest,
+  ProductInput,
   ProductionMode,
   UploadResponse,
 } from "@/lib/types";
@@ -31,14 +33,15 @@ const inputCls =
 
 export function InputPanel({
   onGenerate,
+  onExample,
   loading,
 }: {
   onGenerate: (req: GenerateRequest) => void;
+  onExample: () => void;
   loading: boolean;
 }) {
   const { t } = useI18n();
-  const [productName, setProductName] = useState("");
-  const [benefits, setBenefits] = useState("");
+  const [products, setProducts] = useState<ProductInput[]>([makeProduct()]);
   const [niche, setNiche] = useState("");
   const [mode, setMode] = useState<ProductionMode>("ia");
   const [extraPrompt, setExtraPrompt] = useState("");
@@ -47,14 +50,13 @@ export function InputPanel({
   const [error, setError] = useState("");
 
   const submit = () => {
-    if (!productName.trim()) {
+    if (!products.some((p) => p.name.trim())) {
       setError(t.requiredProduct);
       return;
     }
     setError("");
     onGenerate({
-      productName: productName.trim(),
-      benefits: benefits.trim(),
+      products: products.filter((p) => p.name.trim() || p.benefits.trim()),
       niche: niche.trim(),
       productionMode: mode,
       extraPrompt: extraPrompt.trim() || undefined,
@@ -83,34 +85,19 @@ export function InputPanel({
       </motion.div>
 
       <motion.div variants={fieldVariants}>
-        <Label>{t.productName}</Label>
-        <input
-          className={inputCls}
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-          placeholder={t.productNamePh}
-        />
+        <Label>{t.products}</Label>
+        <p className="-mt-1 mb-2 text-xs text-muted">{t.productsHint}</p>
+        <ProductList products={products} onChange={setProducts} />
       </motion.div>
 
-      <motion.div variants={fieldVariants} className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <Label>{t.benefits}</Label>
-          <input
-            className={inputCls}
-            value={benefits}
-            onChange={(e) => setBenefits(e.target.value)}
-            placeholder={t.benefitsPh}
-          />
-        </div>
-        <div>
-          <Label>{t.niche}</Label>
-          <input
-            className={inputCls}
-            value={niche}
-            onChange={(e) => setNiche(e.target.value)}
-            placeholder={t.nichePh}
-          />
-        </div>
+      <motion.div variants={fieldVariants}>
+        <Label>{t.niche}</Label>
+        <input
+          className={inputCls}
+          value={niche}
+          onChange={(e) => setNiche(e.target.value)}
+          placeholder={t.nichePh}
+        />
       </motion.div>
 
       <motion.div variants={fieldVariants}>
@@ -168,30 +155,41 @@ export function InputPanel({
         </motion.p>
       )}
 
-      <motion.button
-        variants={fieldVariants}
-        type="button"
-        onClick={submit}
-        disabled={loading}
-        whileHover={{ scale: loading ? 1 : 1.02 }}
-        whileTap={{ scale: loading ? 1 : 0.98 }}
-        className={cn(
-          "gradient-primary shimmer group relative flex h-14 items-center justify-center gap-2.5 overflow-hidden rounded-2xl text-base font-semibold text-primary-foreground shadow-soft transition-opacity",
-          loading && "cursor-not-allowed opacity-80",
-        )}
-      >
-        {loading ? (
-          <>
-            <span className="h-5 w-5 animate-spin-slow rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" />
-            {t.generating}
-          </>
-        ) : (
-          <>
-            <SparklesIcon className="h-5 w-5 transition-transform group-hover:rotate-12" />
-            {t.generate}
-          </>
-        )}
-      </motion.button>
+      <motion.div variants={fieldVariants} className="flex flex-col gap-2.5">
+        <motion.button
+          type="button"
+          onClick={submit}
+          disabled={loading}
+          whileHover={{ scale: loading ? 1 : 1.02 }}
+          whileTap={{ scale: loading ? 1 : 0.98 }}
+          className={cn(
+            "gradient-primary shimmer group relative flex h-14 items-center justify-center gap-2.5 overflow-hidden rounded-2xl text-base font-semibold text-primary-foreground shadow-soft transition-opacity",
+            loading && "cursor-not-allowed opacity-80",
+          )}
+        >
+          {loading ? (
+            <>
+              <span className="h-5 w-5 animate-spin-slow rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" />
+              {t.generating}
+            </>
+          ) : (
+            <>
+              <SparklesIcon className="h-5 w-5 transition-transform group-hover:rotate-12" />
+              {t.generate}
+            </>
+          )}
+        </motion.button>
+
+        <button
+          type="button"
+          onClick={onExample}
+          disabled={loading}
+          className="flex h-11 items-center justify-center gap-2 rounded-xl border border-border bg-surface/50 text-sm font-medium text-muted transition-colors hover:border-accent/50 hover:text-foreground disabled:opacity-50"
+        >
+          <PlayIcon className="h-4 w-4" />
+          {t.seeExample}
+        </button>
+      </motion.div>
     </motion.section>
   );
 }

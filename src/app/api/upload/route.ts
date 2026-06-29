@@ -18,9 +18,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!file.type.startsWith("video/")) {
+    if (!file.type.startsWith("video/") && !file.type.startsWith("image/")) {
       return NextResponse.json(
-        { error: "El archivo debe ser un video." },
+        { error: "El archivo debe ser un video o una imagen." },
         { status: 400 },
       );
     }

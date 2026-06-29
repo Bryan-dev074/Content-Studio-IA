@@ -24,10 +24,12 @@ export function ResultsPanel({
   result,
   loading,
   error,
+  example = false,
 }: {
   result: ScriptResult | null;
   loading: boolean;
   error: string;
+  example?: boolean;
 }) {
   const { t, lang: uiLang } = useI18n();
   const [data, setData] = useState<ScriptResult | null>(null);
@@ -135,10 +137,17 @@ export function ResultsPanel({
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <span className="gradient-primary inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
-              <SparklesIcon className="h-3 w-3" />
-              {data.productionMode === "hibrido" ? t.modeHybrid : t.modeIA}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {example && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                  {t.exampleBadge}
+                </span>
+              )}
+              <span className="gradient-primary inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
+                <SparklesIcon className="h-3 w-3" />
+                {data.productionMode === "hibrido" ? t.modeHybrid : t.modeIA}
+              </span>
+            </div>
             <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
               {data.title[scriptLang]}
             </h2>
