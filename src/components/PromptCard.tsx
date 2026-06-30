@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CopyButton } from "./CopyButton";
 import { RefineModal } from "./RefineModal";
-import { WandIcon, ImageIcon, FilmIcon } from "./icons";
+import { WandIcon, ImageIcon, FilmIcon, CameraIcon, UploadIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { cn } from "@/lib/utils";
 import type { Lang, Localized, PromptBlock, ProductionMode } from "@/lib/types";
@@ -68,6 +68,34 @@ export function PromptCard({
             </span>
           )}
         </div>
+
+        {/* Cabecera: qué se quiere generar + qué cargar en Flow */}
+        {(prompt.purpose?.[lang] || prompt.flowInputs?.[lang]) && (
+          <div className="mb-2.5 space-y-1.5 rounded-lg border border-accent/20 bg-accent/[0.06] p-2.5">
+            {prompt.purpose?.[lang] && (
+              <div className="flex items-start gap-2">
+                <CameraIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                <p className="break-words text-xs leading-relaxed text-foreground/90">
+                  <span className="font-bold uppercase tracking-wide text-accent">
+                    {t.promptPurpose}:
+                  </span>{" "}
+                  {prompt.purpose[lang]}
+                </p>
+              </div>
+            )}
+            {prompt.flowInputs?.[lang] && (
+              <div className="flex items-start gap-2">
+                <UploadIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-2" />
+                <p className="break-words text-xs leading-relaxed text-foreground/90">
+                  <span className="font-bold uppercase tracking-wide text-accent-2">
+                    {t.promptFlowInputs}:
+                  </span>{" "}
+                  {prompt.flowInputs[lang]}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         <textarea
           value={prompt.content[lang]}

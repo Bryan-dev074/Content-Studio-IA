@@ -44,7 +44,9 @@ las dos versiones de idioma { "es": "...", "pt": "..." } (pt = portugués de Bra
           "kind": "imagen-0c" | "animacion" | "fondo-chroma" | "lipsync",
           "title": { "es": "Imagen Base 0c — Gancho", "pt": "..." },
           "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
-          "content": { "es": "PROMPT ULTRA-DETALLADO", "pt": "PROMPT ULTRA-DETALHADO" }
+          "purpose": { "es": "QUÉ se quiere generar y TIPO de toma: 'Toma de PRODUCTO', 'Toma del AVATAR/PERSONA', 'Toma de FONDO/ESCENARIO' o 'Toma de TEXTURA/DETALLE' + una frase de objetivo", "pt": "..." },
+          "flowInputs": { "es": "QUÉ cargar en Google Flow para esta toma: 'Foto del producto', 'Logo de ElaBela', 'Frame del avatar', combinación o 'Ninguno'", "pt": "..." },
+          "content": { "es": "PROMPT ULTRA-DETALLADO Y AUTOCONTENIDO", "pt": "PROMPT ULTRA-DETALHADO E AUTOCONTIDO" }
         }
       ]
     }
@@ -131,13 +133,35 @@ ${modeBlock}
   detalle, plano medio...), ÁNGULO de cámara, MOVIMIENTO (push-in, dolly, whip
   pan, snap zoom...) y la acción exacta de ese segundo a ese segundo.
 - En "audio" escribe la locución limpia y natural, optimizada para ElevenLabs.
+- ANÁLISIS DEL PRODUCTO: si se adjunta una FOTO del producto, ANALÍZALA a fondo —
+  identifica qué producto es (tipo/categoría), su ENVASE (frasco, gotero, tubo,
+  tarro, spray...), color, material, acabado, tapa y la etiqueta/texto visible, y
+  deduce para qué sirve. COMBINA ese análisis visual con la descripción textual del
+  usuario y describe el producto en los prompts de forma 100% FIEL a la foto (mismo
+  envase, color, proporciones, etiqueta y logo). NUNCA inventes un envase distinto
+  al de la imagen.
+- CLARIDAD DE CADA PROMPT (campos "purpose" y "flowInputs"): por CADA prompt deja
+  EXPLÍCITO (a) en "purpose" QUÉ se quiere generar y de qué TIPO de toma es —
+  Producto / Avatar-Persona / Fondo-Escenario / Textura-Detalle — y (b) en
+  "flowInputs" QUÉ insumos hay que cargar en Google Flow: la foto del producto, el
+  logo de ElaBela, el frame del avatar, una combinación, o "Ninguno".
+- UN SOLO SUJETO POR IMAGEN: cada imagen 0c muestra UN único foco. NUNCA pongas
+  varios productos distintos juntos en la misma toma ni satures la escena con
+  objetos. Si el guion tiene varios productos, cada uno va en su propia toma.
 - Los prompts de IMAGEN 0c se generan con **NanoBanana Pro en Google Flow**:
-  redáctalos en lenguaje natural fotográfico, EXTREMADAMENTE DETALLADOS e
-  impecables — sujeto, composición y encuadre, lente/cámara virtual, iluminación,
-  paleta de color, textura y materiales, fondo/props, estado de ánimo y calidad
-  ("hyperrealistic, 8k, photoreal skin texture", formato vertical 9:16). Los
-  prompts de ANIMACIÓN describen el movimiento físico y de cámara para el modelo
-  image-to-video, con la mayor precisión posible.
+  redáctalos en lenguaje natural fotográfico, EXTREMADAMENTE DETALLADOS, impecables
+  y AUTOCONTENIDOS — sujeto exacto, composición y encuadre 9:16, lente/cámara
+  virtual, distancia focal, iluminación (dirección, dureza, temperatura), paleta de
+  color, textura y materiales, fondo/props concretos, estado de ánimo y calidad
+  ("hyperrealistic, 8k, photoreal skin texture"). Deja claro si el protagonista es
+  el producto, la persona/avatar o el entorno. Un prompt nunca debe ser ambiguo.
+- Los prompts de ANIMACIÓN (image-to-video) deben ser IGUAL de detallados: parte
+  SIEMPRE de la imagen 0c correspondiente e indica el MOVIMIENTO exacto del sujeto y
+  de la CÁMARA (push-in, dolly, whip pan, orbit, snap zoom...), su velocidad,
+  duración en segundos y resolución/fps, la física del movimiento (cómo cae la gota,
+  cómo fluye la textura, el rebote), y salvaguardas de continuidad (mismo producto y
+  rostro, sin morphing, flicker, deformación ni cambio de etiqueta). Describe el
+  resultado esperado del clip.
 - INTEGRIDAD Y CONSISTENCIA — incluye SIEMPRE estas salvaguardas en los prompts
   (de imagen y de video) cuando apliquen: el PRODUCTO NO debe deformarse,
   derretirse ni cambiar de forma, color, tamaño, etiqueta ni marca entre frames;
@@ -173,7 +197,7 @@ export function buildUserContent(req: GenerateRequest): string {
     lines.push(`- Beneficios clave: ${p?.benefits?.trim() || "(no especificados)"}`);
     if (p?.imageFileUri) {
       lines.push(
-        "  (Se adjunta una IMAGEN REAL de este producto: úsala como referencia fiel para describir el producto en los prompts de imagen 0c.)",
+        "  (Se adjunta una FOTO REAL de este producto: ANALÍZALA — envase, color, material, tapa, etiqueta/logo y para qué sirve — y combínala con la descripción de arriba. Describe el producto de forma 100% FIEL a esa foto en los prompts de imagen 0c, sin inventar un envase distinto.)",
       );
     }
   } else {
@@ -315,7 +339,9 @@ con texto legible en español (es) y portugués de Brasil (pt):
       "kind": "imagen-0c" | "animacion" | "fondo-chroma" | "lipsync",
       "title": { "es": "...", "pt": "..." },
       "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
-      "content": { "es": "PROMPT ULTRA-DETALLADO", "pt": "..." }
+      "purpose": { "es": "QUÉ se genera y TIPO de toma (Producto / Avatar-Persona / Fondo / Textura) + objetivo", "pt": "..." },
+      "flowInputs": { "es": "QUÉ cargar en Flow (foto del producto, logo de ElaBela, frame del avatar, Ninguno)", "pt": "..." },
+      "content": { "es": "PROMPT ULTRA-DETALLADO Y AUTOCONTENIDO", "pt": "..." }
     }
   ]
 }
@@ -346,10 +372,17 @@ REGLAS DE LA REGENERACIÓN:
 - Mantén la CONTINUIDAD con la escena anterior y la siguiente (que el corte fluya
   natural; misma identidad de personaje, producto y estilo visual).
 - Aplica con fuerza el ENFOQUE que pide el usuario para esta escena.
-- Prompts de imagen 0c para NanoBanana Pro (Flow): EXTREMADAMENTE detallados.
-  Incluye SIEMPRE salvaguardas: el producto NO se deforma ni cambia de etiqueta,
-  logo/texto legibles, rostro/identidad consistentes, lipsync perfecto donde
-  aplique, formato vertical 9:16.
+- Prompts de imagen 0c para NanoBanana Pro (Flow): EXTREMADAMENTE detallados y
+  autocontenidos. Incluye SIEMPRE salvaguardas: el producto NO se deforma ni cambia
+  de etiqueta, logo/texto legibles, rostro/identidad consistentes, lipsync perfecto
+  donde aplique, formato vertical 9:16.
+- Rellena SIEMPRE "purpose" (qué se genera y tipo de toma: Producto / Avatar-Persona
+  / Fondo / Textura) y "flowInputs" (qué cargar en Flow: foto del producto, logo de
+  ElaBela, frame del avatar o Ninguno). UN SOLO foco por imagen; nunca varios
+  productos juntos. Si hay foto del producto, descríbelo FIEL a ella.
+- Prompts de ANIMACIÓN: parte de la imagen 0c e indica movimiento de sujeto y cámara,
+  velocidad, duración, física y salvaguardas de continuidad (sin morphing ni
+  deformación).
 - Si esta escena es el Gancho / primer clip, el prompt de imagen 0c DEBE indicar
   que se use el logotipo de ElaBela PROPORCIONADO, ubicado de forma natural en la
   escena (cuadro de fondo, empaque, cartel...), sin describirlo en detalle.

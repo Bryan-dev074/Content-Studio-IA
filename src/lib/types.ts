@@ -20,6 +20,12 @@ export interface PromptBlock {
   title: Localized;
   /** Modelo recomendado: "Seedance 2.0", "Kling 3.0", "Omni Flash", "nanobanana pro"... */
   model?: string;
+  /** Qué se quiere generar con este prompt y de qué TIPO de toma es:
+   *  toma de Producto, de Avatar/Persona, de Fondo/Escenario o de Textura/Detalle. */
+  purpose?: Localized;
+  /** Qué hace falta CARGAR en Google Flow para generar esto
+   *  (ej. "Foto del producto + logo de ElaBela", "Frame del avatar", "Ninguno"). */
+  flowInputs?: Localized;
   /** El prompt en sí, ultra-detallado, en ambos idiomas. Es editable en la UI. */
   content: Localized;
 }

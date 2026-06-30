@@ -155,7 +155,7 @@ export async function generateScript(
   for (const p of req.products ?? []) {
     if (p.imageFileUri && p.imageMimeType) {
       parts.push({
-        text: `Imagen real del producto "${p.name?.trim() || "producto"}" (úsala como referencia fiel para describirlo en los prompts de imagen 0c):`,
+        text: `Foto real del producto "${p.name?.trim() || "producto"}". ANALÍZALA: identifica qué producto es, su envase (frasco, gotero, tubo, tarro, spray...), color, material, tapa y la etiqueta/texto visible, y para qué sirve. Combínalo con la descripción del usuario y describe el producto de forma 100% FIEL a esta foto (mismo envase, color, proporciones y etiqueta) en los prompts de imagen 0c; no inventes un envase distinto:`,
       });
       parts.push({
         fileData: { fileUri: p.imageFileUri, mimeType: p.imageMimeType },
@@ -236,7 +236,7 @@ export async function regenerateScene(
   for (const p of req.products ?? []) {
     if (p.imageFileUri && p.imageMimeType) {
       parts.push({
-        text: `Imagen real del producto "${p.name?.trim() || "producto"}" (referencia fiel):`,
+        text: `Foto real del producto "${p.name?.trim() || "producto"}". Analízala (envase, color, material, etiqueta/logo) y describe el producto FIEL a esta foto, sin inventar un envase distinto:`,
       });
       parts.push({
         fileData: { fileUri: p.imageFileUri, mimeType: p.imageMimeType },

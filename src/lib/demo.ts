@@ -67,6 +67,14 @@ export const demoScript: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Gancho", pt: "Imagem Base 0c — Gancho" },
           model: "NanoBanana Pro (Flow)",
+          purpose: {
+            es: "Toma del Avatar/Persona (Gancho): el rostro es el protagonista; el frasco aparece al fondo en la repisa.",
+            pt: "Tomada do Avatar/Pessoa (Gancho): o rosto é o protagonista; o frasco aparece ao fundo na prateleira.",
+          },
+          flowInputs: {
+            es: "Foto del producto + logo de ElaBela.",
+            pt: "Foto do produto + logo da ElaBela.",
+          },
           content: {
             es: "Retrato hiperrealista vertical 9:16 de una mujer latina de unos 35 años, piel real con textura y poros visibles, expresión natural de duda, luz suave de ventana por la izquierda, fondo de baño minimalista beige desenfocado. En la repisa del fondo se ve el frasco del sérum que USA el logotipo de ElaBela proporcionado en su etiqueta (legible, sin deformar). El producto no se deforma ni cambia de forma. Estilo UGC premium, photoreal skin, 8k.",
             pt: "Retrato hiper-realista vertical 9:16 de uma mulher latina de uns 35 anos, pele real com textura e poros visíveis, expressão natural de dúvida, luz suave de janela pela esquerda, fundo de banheiro minimalista bege desfocado. Na prateleira ao fundo vê-se o frasco do sérum que USA o logotipo da ElaBela fornecido no rótulo (legível, sem deformar). O produto não se deforma nem muda de forma. Estilo UGC premium, photoreal skin, 8k.",
@@ -77,6 +85,14 @@ export const demoScript: ScriptResult = {
           kind: "animacion",
           title: { es: "Animación — Snap zoom", pt: "Animação — Snap zoom" },
           model: "Seedance 2.0",
+          purpose: {
+            es: "Animación de la toma del Gancho: da movimiento (snap zoom) a la imagen 0c del rostro.",
+            pt: "Animação da tomada do Gancho: dá movimento (snap zoom) à imagem 0c do rosto.",
+          },
+          flowInputs: {
+            es: "La imagen 0c del Gancho (s1) como frame inicial.",
+            pt: "A imagem 0c do Gancho (s1) como frame inicial.",
+          },
           content: {
             es: "Snap zoom rápido (push-in) hacia la mejilla en los primeros 0.5 s, micro-temblor de cámara handheld, parpadeo natural. 5 s, 720p.",
             pt: "Snap zoom rápido (push-in) em direção à bochecha nos primeiros 0,5 s, micro-tremor de câmera handheld, piscar natural. 5 s, 720p.",
@@ -106,6 +122,14 @@ export const demoScript: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Textura villano", pt: "Imagem Base 0c — Textura vilão" },
           model: "Kling 3.0",
+          purpose: {
+            es: "Toma de Textura/Detalle: macro de piel deshidratada (representa al villano). Sin producto en cuadro.",
+            pt: "Tomada de Textura/Detalhe: macro de pele desidratada (representa o vilão). Sem produto em quadro.",
+          },
+          flowInputs: {
+            es: "Ninguno (generación libre).",
+            pt: "Nenhum (geração livre).",
+          },
           content: {
             es: "Macro extrema 9:16 de piel de mejilla con leves líneas de deshidratación y aspecto mate, luz lateral dura que marca la textura, tonos neutros fríos. Photoreal, 4k, foco selectivo.",
             pt: "Macro extrema 9:16 de pele da bochecha com leves linhas de desidratação e aspecto fosco, luz lateral dura que marca a textura, tons neutros frios. Photoreal, 4k, foco seletivo.",
@@ -135,6 +159,14 @@ export const demoScript: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Product Pop", pt: "Imagem Base 0c — Product Pop" },
           model: "Seedance 2.0",
+          purpose: {
+            es: "Toma de Producto: el frasco con gotero es el único protagonista en primer plano.",
+            pt: "Tomada de Produto: o frasco com conta-gotas é o único protagonista em primeiro plano.",
+          },
+          flowInputs: {
+            es: "Foto del producto + logo de ElaBela.",
+            pt: "Foto do produto + logo da ElaBela.",
+          },
           content: {
             es: "Frasco de sérum ámbar con gotero en primer plano 9:16, gota suspendida brillando, fondo cálido bokeh, etiqueta con el logotipo ElaBela visible y nítida en el frasco. Iluminación de estudio que resalta el líquido dorado, hyperrealistic, 8k.",
             pt: "Frasco de sérum âmbar com conta-gotas em primeiro plano 9:16, gota suspensa brilhando, fundo quente bokeh, rótulo com o logotipo ElaBela visível e nítido no frasco. Iluminação de estúdio que realça o líquido dourado, hyperrealistic, 8k.",
@@ -145,6 +177,14 @@ export const demoScript: ScriptResult = {
           kind: "animacion",
           title: { es: "Animación — Dolly-in", pt: "Animação — Dolly-in" },
           model: "Seedance 2.0",
+          purpose: {
+            es: "Animación de la toma de Producto: dolly-in al gotero con la gota cayendo.",
+            pt: "Animação da tomada de Produto: dolly-in no conta-gotas com a gota caindo.",
+          },
+          flowInputs: {
+            es: "La imagen 0c del Product Pop (s3) como frame inicial.",
+            pt: "A imagem 0c do Product Pop (s3) como frame inicial.",
+          },
           content: {
             es: "Dolly-in suave al gotero, la gota cae en cámara lenta, reflejos dorados moviéndose. 5 s, 720p.",
             pt: "Dolly-in suave ao conta-gotas, a gota cai em câmera lenta, reflexos dourados em movimento. 5 s, 720p.",
@@ -174,6 +214,14 @@ export const demoScript: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Cierre", pt: "Imagem Base 0c — Fecho" },
           model: "Omni Flash",
+          purpose: {
+            es: "Toma del Avatar/Persona (Cierre): mismo rostro con piel luminosa, el frasco junto a la mejilla.",
+            pt: "Tomada do Avatar/Pessoa (Fecho): mesmo rosto com pele luminosa, o frasco junto à bochecha.",
+          },
+          flowInputs: {
+            es: "Frame del avatar (continuidad) + foto del producto.",
+            pt: "Frame do avatar (continuidade) + foto do produto.",
+          },
           content: {
             es: "Mismo rostro ahora con piel luminosa y jugosa, sonrisa natural, luz cálida dorada, frasco ElaBela junto a la mejilla. 9:16, photoreal, 8k.",
             pt: "Mesmo rosto agora com pele luminosa e suculenta, sorriso natural, luz quente dourada, frasco ElaBela junto à bochecha. 9:16, photoreal, 8k.",
@@ -273,6 +321,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "fondo-chroma",
           title: { es: "Fondo Chroma 0c — Gancho", pt: "Fundo Chroma 0c — Gancho" },
           model: "NanoBanana Pro (Flow)",
+          purpose: {
+            es: "Toma de Fondo/Escenario (chroma): set que se incrusta tras la presentadora. Sin personas ni producto.",
+            pt: "Tomada de Fundo/Cenário (chroma): set que se insere atrás da apresentadora. Sem pessoas nem produto.",
+          },
+          flowInputs: {
+            es: "Logo de ElaBela (para el cuadro de la pared).",
+            pt: "Logo da ElaBela (para o quadro da parede).",
+          },
           content: {
             es: "Fondo estático vertical 9:16 para incrustar tras la presentadora (chroma): baño/tocador minimalista beige cálido, repisa con plantas y skincare desenfocado (bokeh suave). En la pared del fondo, un cuadro/poster enmarcado que USA el logotipo de ElaBela proporcionado (sin deformarlo, legible). Iluminación suave de mañana, photoreal, 8k. Sin personas en el fondo.",
             pt: "Fundo estático vertical 9:16 para inserir atrás da apresentadora (chroma): banheiro/penteadeira minimalista bege quente, prateleira com plantas e skincare desfocado (bokeh suave). Na parede ao fundo, um quadro/poster emoldurado que USA o logotipo da ElaBela fornecido (sem deformá-lo, legível). Iluminação suave de manhã, photoreal, 8k. Sem pessoas no fundo.",
@@ -303,6 +359,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Gota", pt: "Imagem Base 0c — Gota" },
           model: "NanoBanana Pro (Flow)",
+          purpose: {
+            es: "Toma de Producto: macro del gotero con la gota; el producto es el único foco.",
+            pt: "Tomada de Produto: macro do conta-gotas com a gota; o produto é o único foco.",
+          },
+          flowInputs: {
+            es: "Foto del producto + logo de ElaBela.",
+            pt: "Foto do produto + logo da ElaBela.",
+          },
           content: {
             es: "Macro 9:16 de un gotero de vidrio ámbar sobre una mano femenina, gota dorada a punto de caer, fondo cálido bokeh. El frasco mantiene su forma y etiqueta sin deformarse, logo legible. Iluminación de estudio suave que hace brillar el líquido, hyperrealistic, 8k.",
             pt: "Macro 9:16 de um conta-gotas de vidro âmbar sobre uma mão feminina, gota dourada prestes a cair, fundo quente bokeh. O frasco mantém sua forma e rótulo sem deformar, logo legível. Iluminação de estúdio suave que faz o líquido brilhar, hyperrealistic, 8k.",
@@ -313,6 +377,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "animacion",
           title: { es: "Animación — Dolly-in gota", pt: "Animação — Dolly-in gota" },
           model: "Seedance 2.0",
+          purpose: {
+            es: "Animación de la toma de Producto: dolly-in a la gota que cae en cámara lenta.",
+            pt: "Animação da tomada de Produto: dolly-in na gota que cai em câmera lenta.",
+          },
+          flowInputs: {
+            es: "La imagen 0c de la gota (s2) como frame inicial.",
+            pt: "A imagem 0c da gota (s2) como frame inicial.",
+          },
           content: {
             es: "Dolly-in lento hacia la gota que cae en cámara lenta; el producto NO se deforma ni cambia de etiqueta; reflejos dorados estables. 5 s, 720p.",
             pt: "Dolly-in lento em direção à gota que cai em câmera lenta; o produto NÃO se deforma nem muda de rótulo; reflexos dourados estáveis. 5 s, 720p.",
@@ -343,6 +415,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "imagen-0c",
           title: { es: "Imagen Base 0c — Piel luminosa", pt: "Imagem Base 0c — Pele luminosa" },
           model: "Kling 3.0",
+          purpose: {
+            es: "Toma de Textura/Detalle: macro de piel luminosa e hidratada (el resultado). Sin producto en cuadro.",
+            pt: "Tomada de Textura/Detalhe: macro de pele luminosa e hidratada (o resultado). Sem produto em quadro.",
+          },
+          flowInputs: {
+            es: "Ninguno (generación libre).",
+            pt: "Nenhum (geração livre).",
+          },
           content: {
             es: "Macro 9:16 de mejilla con piel hidratada y luminosa, brillo natural saludable, poros realistas, luz cálida dorada. Photoreal, 4k, foco selectivo. Sin artefactos ni morphing.",
             pt: "Macro 9:16 de bochecha com pele hidratada e luminosa, brilho natural saudável, poros realistas, luz quente dourada. Photoreal, 4k, foco seletivo. Sem artefatos nem morphing.",
@@ -353,6 +433,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "animacion",
           title: { es: "Animación — Whip pan", pt: "Animação — Whip pan" },
           model: "Kling 3.0",
+          purpose: {
+            es: "Animación de la toma de Textura: whip pan desde la textura del sérum a la mejilla luminosa.",
+            pt: "Animação da tomada de Textura: whip pan da textura do sérum para a bochecha luminosa.",
+          },
+          flowInputs: {
+            es: "La imagen 0c de piel luminosa (s3) como frame inicial.",
+            pt: "A imagem 0c de pele luminosa (s3) como frame inicial.",
+          },
           content: {
             es: "Whip pan rápido desde la textura del sérum hacia la mejilla luminosa, transición fluida sin deformar la piel ni el rostro. 5 s, 720p.",
             pt: "Whip pan rápido da textura do sérum para a bochecha luminosa, transição fluida sem deformar a pele nem o rosto. 5 s, 720p.",
@@ -387,6 +475,14 @@ export const demoScriptHybrid: ScriptResult = {
           kind: "fondo-chroma",
           title: { es: "Fondo Chroma 0c — Cierre", pt: "Fundo Chroma 0c — Fecho" },
           model: "NanoBanana Pro (Flow)",
+          purpose: {
+            es: "Toma de Fondo/Escenario (chroma) para el cierre, con luz dorada. Sin personas.",
+            pt: "Tomada de Fundo/Cenário (chroma) para o fecho, com luz dourada. Sem pessoas.",
+          },
+          flowInputs: {
+            es: "Logo de ElaBela + foto del producto (en la repisa).",
+            pt: "Logo da ElaBela + foto do produto (na prateleira).",
+          },
           content: {
             es: "Mismo fondo de baño cálido 9:16 para chroma, ahora con luz dorada de cierre. En la repisa, el producto y un cuadro de fondo que USA el logotipo de ElaBela proporcionado (legible, sin deformar). Photoreal, 8k, sin personas.",
             pt: "Mesmo fundo de banheiro quente 9:16 para chroma, agora com luz dourada de fecho. Na prateleira, o produto e um quadro ao fundo que USA o logotipo da ElaBela fornecido (legível, sem deformar). Photoreal, 8k, sem pessoas.",
