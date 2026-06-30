@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SceneCard } from "./SceneCard";
 import { LocutionPanel } from "./LocutionPanel";
@@ -8,9 +8,18 @@ import { CostTable } from "./CostTable";
 import { LoadingState } from "./LoadingState";
 import { SegmentedToggle } from "./SegmentedToggle";
 import { CatLogo } from "./CatLogo";
-import { ChevronDownIcon, DownloadIcon, GlobeIcon, SparklesIcon } from "./icons";
+import { ScriptFullscreen } from "./ScriptFullscreen";
+import {
+  ChevronDownIcon,
+  DownloadIcon,
+  GlobeIcon,
+  MaximizeIcon,
+  RefreshIcon,
+  SparklesIcon,
+} from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { scriptToMarkdown } from "@/lib/export";
+import { computeCosts } from "@/lib/pricing";
 import { LANGS } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type {
@@ -46,6 +55,13 @@ export function ResultsPanel({
   const [data, setData] = useState<ScriptResult | null>(null);
   const [scriptLang, setScriptLang] = useState<Lang>(uiLang);
   const [analysisOpen, setAnalysisOpen] = useState(false);
+  const [fsOpen, setFsOpen] = useState(false);
+  const [restructuring, setRestructuring] = useState(false);
+  const [restructError, setRestructError] = useState("");
+  const [restructSec, setRestructSec] = useState<number | null>(null);
+
+  // Créditos SIEMPRE en sync con las escenas actuales (incluye ediciones/regen).
+  const costs = useMemo(() => (data ? computeCosts(data.scenes) : null), [data]);
 
   useEffect(() => {
     if (result) setData(structuredClone(result));
@@ -94,7 +110,8 @@ export function ResultsPanel({
 
   const download = () => {
     if (!data) return;
-    const md = scriptToMarkdown(data, scriptLang);
+    const exportData = costs ? { ...data, costs } : data;
+    const md = scriptToMarkdown(exportData, scriptLang);
     const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -104,7 +121,35 @@ export function ResultsPanel({
     URL.revokeObjectURL(url);
   };
 
+  const restructure = async (targetSec: number) => {
+    if (!data || restructuring || !targetSec) return;
+    setRestructuring(true);
+    setRestructError("");
+    try {
+      const res = await fetch("/api/restructure", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productionMode: data.productionMode,
+          targetSec,
+          script: data,
+          niche: brief?.niche,
+          tone: brief?.tone,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || t.errorGeneric);
+      setData(structuredClone(d as ScriptResult));
+      setRestructSec(null);
+    } catch (err) {
+      setRestructError(err instanceof Error ? err.message : t.errorGeneric);
+    } finally {
+      setRestructuring(false);
+    }
+  };
+
   if (loading) return <LoadingState estimateSec={estimateSec} />;
+  if (restructuring) return <LoadingState estimateSec={45} />;
 
   if (error) {
     return (
@@ -274,17 +319,91 @@ export function ResultsPanel({
         )}
 
         {/* Acciones */}
-        <div className="mt-5 flex flex-wrap gap-2">
-          <motion.button
-            type="button"
-            onClick={download}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/60 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-accent/50"
-          >
-            <DownloadIcon className="h-4 w-4" />
-            {t.download}
-          </motion.button>
+        <div className="mt-5 space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <motion.button
+              type="button"
+              onClick={() => setFsOpen(true)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="gradient-primary inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft"
+            >
+              <MaximizeIcon className="h-4 w-4" />
+              {t.fullscreen}
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={download}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface/60 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-accent/50"
+            >
+              <DownloadIcon className="h-4 w-4" />
+              {t.download}
+            </motion.button>
+          </div>
+
+          {/* Reestructurar a otra duración */}
+          <div className="rounded-xl border border-border bg-surface-2/30 p-3.5">
+            <div className="flex items-center gap-2">
+              <RefreshIcon className="h-4 w-4 text-accent" />
+              <p className="text-xs font-bold uppercase tracking-wider text-muted">
+                {t.restructureTitle}
+              </p>
+            </div>
+            <p className="mt-1 text-xs text-muted">{t.restructureHint}</p>
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-foreground/80">
+                {t.restructureTo}:
+              </span>
+              {[15, 20, 30, 45, 60].map((sec) => (
+                <button
+                  key={sec}
+                  type="button"
+                  onClick={() => setRestructSec(sec)}
+                  className={cn(
+                    "rounded-lg border px-3 py-1.5 text-sm font-medium transition-all",
+                    restructSec === sec
+                      ? "gradient-primary border-transparent text-primary-foreground shadow-soft"
+                      : "border-border bg-surface/60 text-muted hover:border-accent/50 hover:text-foreground",
+                  )}
+                >
+                  {sec}s
+                </button>
+              ))}
+              <input
+                type="number"
+                min={5}
+                max={180}
+                value={restructSec ?? ""}
+                onChange={(e) =>
+                  setRestructSec(e.target.value ? Number(e.target.value) : null)
+                }
+                placeholder={t.restructureCustomPh}
+                className="w-16 rounded-lg border border-border bg-surface/60 px-2.5 py-1.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-2 focus:border-accent focus:ring-2 focus:ring-[var(--ring)]"
+              />
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <motion.button
+                type="button"
+                onClick={() => restructSec && restructure(restructSec)}
+                disabled={!restructSec}
+                whileHover={{ scale: restructSec ? 1.03 : 1 }}
+                whileTap={{ scale: restructSec ? 0.97 : 1 }}
+                className="gradient-primary inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-primary-foreground shadow-soft transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <RefreshIcon className="h-4 w-4" />
+                {restructSec
+                  ? `${t.restructureApply} · ${restructSec}s`
+                  : t.restructureApply}
+              </motion.button>
+            </div>
+            {restructError && (
+              <p className="mt-2 text-xs font-medium text-danger">
+                {restructError}
+              </p>
+            )}
+          </div>
         </div>
       </motion.div>
 
@@ -343,8 +462,17 @@ export function ResultsPanel({
         </p>
       </motion.div>
 
-      {/* Costos */}
-      {data.costs && <CostTable costs={data.costs} lang={scriptLang} />}
+      {/* Costos (calculados desde los prompts reales) */}
+      {costs && <CostTable costs={costs} lang={scriptLang} />}
+
+      {/* Vista a pantalla completa */}
+      <ScriptFullscreen
+        open={fsOpen}
+        data={data}
+        lang={scriptLang}
+        onLang={setScriptLang}
+        onClose={() => setFsOpen(false)}
+      />
     </motion.div>
   );
 }

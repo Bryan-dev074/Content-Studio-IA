@@ -34,6 +34,7 @@ export function ProductList({
   const [meta, setMeta] = useState<
     Record<string, { preview?: string; status: Status }>
   >({});
+  const [dragId, setDragId] = useState<string | null>(null);
 
   const update = (id: string, patch: Partial<ProductInput>) =>
     onChange(products.map((p) => (p.id === id ? { ...p, ...patch } : p)));
@@ -82,6 +83,28 @@ export function ProductList({
     setStatus(id, "idle", undefined);
   };
 
+  // Arrastrar y soltar un archivo de imagen.
+  const onDrop = (id: string, e: React.DragEvent) => {
+    e.preventDefault();
+    setDragId(null);
+    const file = Array.from(e.dataTransfer.files).find((f) =>
+      f.type.startsWith("image/"),
+    );
+    if (file) handleImage(id, file);
+  };
+
+  // Pegar una imagen desde el portapapeles (Ctrl/Cmd+V con el recuadro enfocado).
+  const onPaste = (id: string, e: React.ClipboardEvent) => {
+    const item = Array.from(e.clipboardData.items).find((i) =>
+      i.type.startsWith("image/"),
+    );
+    const file = item?.getAsFile();
+    if (file) {
+      e.preventDefault();
+      handleImage(id, file);
+    }
+  };
+
   return (
     <div className="space-y-3">
       <AnimatePresence initial={false}>
@@ -119,11 +142,20 @@ export function ProductList({
               <div className="flex gap-3">
                 {/* Imagen del producto */}
                 <label
+                  tabIndex={0}
+                  onPaste={(e) => onPaste(p.id, e)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragId(p.id);
+                  }}
+                  onDragLeave={() => setDragId((d) => (d === p.id ? null : d))}
+                  onDrop={(e) => onDrop(p.id, e)}
                   className={cn(
-                    "group relative grid h-[88px] w-[88px] shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl border border-dashed border-border bg-surface/50 text-center transition-colors hover:border-accent/60",
+                    "group relative grid h-[88px] w-[88px] shrink-0 cursor-pointer place-items-center overflow-hidden rounded-xl border border-dashed border-border bg-surface/50 text-center outline-none transition-colors hover:border-accent/60 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+                    dragId === p.id && "border-accent bg-accent/10",
                     m.status === "error" && "border-danger/60",
                   )}
-                  title={t.productImage}
+                  title={t.productImageHint}
                 >
                   <input
                     type="file"
@@ -167,7 +199,7 @@ export function ProductList({
                     <span className="flex flex-col items-center gap-1 px-1 text-muted">
                       <ImageIcon className="h-5 w-5" />
                       <span className="text-[10px] leading-tight">
-                        {t.productImage}
+                        {t.productImageHint}
                       </span>
                     </span>
                   )}

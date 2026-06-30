@@ -98,18 +98,19 @@ export default function Home() {
           </p>
         </motion.section>
 
-        {/* Layout principal */}
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,460px)_1fr] lg:items-start">
+        {/* Layout principal. min-w-0 en las columnas evita que el contenido
+            fuerce un ancho mayor que la pantalla (overflow horizontal en móvil). */}
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:items-start">
           {/* Columna de entrada: en escritorio scrollea por su cuenta (overflow
               propio) para no depender del scroll global de la página. */}
-          <div className="nice-scroll scroll-fade-y lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:py-1.5 lg:pr-1.5">
+          <div className="min-w-0 nice-scroll scroll-fade-y lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:py-1.5 lg:pr-1.5">
             <InputPanel
               onGenerate={generate}
               onExample={showExample}
               loading={loading}
             />
           </div>
-          <div ref={resultsRef} className="scroll-mt-20 sm:scroll-mt-24">
+          <div ref={resultsRef} className="min-w-0 scroll-mt-20 sm:scroll-mt-24">
             <ResultsPanel
               result={result}
               loading={loading}

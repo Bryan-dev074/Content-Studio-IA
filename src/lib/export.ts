@@ -57,7 +57,11 @@ export function scriptToMarkdown(r: ScriptResult, lang: Lang): string {
     if (s.prompts?.length) {
       out.push("");
       for (const p of s.prompts) {
-        out.push(`  **${L(p.title)}${p.model ? ` — ${p.model}` : ""}**`);
+        out.push(
+          `  **${p.timecode ? `[${p.timecode}] ` : ""}${L(p.title)}${
+            p.model ? ` — ${p.model}` : ""
+          }**`,
+        );
         if (p.purpose?.[lang])
           out.push(`  - ${lang === "es" ? "Qué genera" : "O que gera"}: ${L(p.purpose)}`);
         if (p.flowInputs?.[lang])

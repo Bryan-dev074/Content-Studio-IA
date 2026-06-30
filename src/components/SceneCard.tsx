@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { PromptCard } from "./PromptCard";
 import {
   RegenerateSceneModal,
   type RegenContext,
 } from "./RegenerateSceneModal";
-import { AudioIcon, CameraIcon, RefreshIcon } from "./icons";
+import { AudioIcon, CameraIcon, ChevronDownIcon, RefreshIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { cn } from "@/lib/utils";
 import type { Lang, Localized, ProductionMode, Scene } from "@/lib/types";
@@ -31,6 +31,8 @@ export function SceneCard({
 }) {
   const { t } = useI18n();
   const [regenOpen, setRegenOpen] = useState(false);
+  const [open, setOpen] = useState(index === 0); // la primera abierta; el resto colapsa
+  const clipCount = scene.prompts?.length ?? 0;
 
   return (
     <motion.article
@@ -40,18 +42,42 @@ export function SceneCard({
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="glass overflow-hidden rounded-2xl shadow-soft"
     >
-      {/* Cabecera de la toma */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-border bg-surface-2/40 px-5 py-3">
-        <span className="gradient-primary grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold text-primary-foreground">
-          {index + 1}
-        </span>
-        <span className="rounded-lg bg-background/50 px-2.5 py-1 font-mono text-sm font-semibold text-accent">
-          {scene.timecode}
-        </span>
-        <span className="font-serif text-lg font-semibold text-foreground">
-          {scene.label[lang]}
-        </span>
-        <div className="ml-auto flex items-center gap-2">
+      {/* Cabecera de la toma (clic para desplegar) */}
+      <div
+        className={cn(
+          "flex flex-wrap items-center gap-2.5 border-b bg-surface-2/40 px-4 py-3 sm:gap-3 sm:px-5",
+          open ? "border-border" : "border-transparent",
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+        >
+          <span className="gradient-primary grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold text-primary-foreground">
+            {index + 1}
+          </span>
+          <span className="shrink-0 rounded-lg bg-background/50 px-2 py-1 font-mono text-xs font-semibold text-accent sm:text-sm">
+            {scene.timecode}
+          </span>
+          <span className="min-w-0 truncate font-serif text-base font-semibold text-foreground sm:text-lg">
+            {scene.label[lang]}
+          </span>
+          {!open && clipCount > 0 && (
+            <span className="hidden shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[11px] font-semibold text-accent sm:inline">
+              {clipCount} {t.promptsTitle.toLowerCase()}
+            </span>
+          )}
+          <motion.span
+            animate={{ rotate: open ? 180 : 0 }}
+            transition={{ duration: 0.25 }}
+            className="ml-1 shrink-0 text-muted"
+          >
+            <ChevronDownIcon className="h-4 w-4" />
+          </motion.span>
+        </button>
+        <div className="flex shrink-0 items-center gap-2">
           {scene.roll && (
             <span
               className={cn(
@@ -70,12 +96,22 @@ export function SceneCard({
             className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent transition-colors hover:bg-accent/20"
           >
             <RefreshIcon className="h-3.5 w-3.5" />
-            {t.regenScene}
+            <span className="hidden sm:inline">{t.regenScene}</span>
           </button>
         </div>
       </div>
 
-      <div className="space-y-4 p-5">
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="scene-body"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-4 p-4 sm:p-5">
         {/* Dos columnas: Locución / Cámara */}
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-border bg-surface-2/30 p-4">
@@ -141,7 +177,10 @@ export function SceneCard({
             ))}
           </div>
         )}
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <RegenerateSceneModal
         open={regenOpen}

@@ -168,6 +168,20 @@ export const dict = {
     download: "Descargar guion (.md)",
     regenerate: "Generar otro",
 
+    // Reestructurar / pantalla completa / clips
+    restructureTitle: "Reestructurar duración",
+    restructureHint:
+      "Adapta TODO el guion a otra duración manteniendo la misma idea ganadora.",
+    restructureTo: "Reestructurar a",
+    restructureApply: "Reestructurar",
+    restructureWorking: "Reestructurando…",
+    restructureCustom: "Otra",
+    restructureCustomPh: "seg.",
+    fullscreen: "Pantalla completa",
+    fullscreenExit: "Salir",
+    clipLabel: "Clip",
+    productImageHint: "Arrastra, pega o haz clic",
+
     // Errores
     errorGeneric: "Algo salió mal. Inténtalo de nuevo.",
     errorNoKey:
@@ -331,6 +345,20 @@ export const dict = {
 
     download: "Baixar roteiro (.md)",
     regenerate: "Gerar outro",
+
+    // Reestruturar / tela cheia / clipes
+    restructureTitle: "Reestruturar duração",
+    restructureHint:
+      "Adapta TODO o roteiro a outra duração mantendo a mesma ideia vencedora.",
+    restructureTo: "Reestruturar para",
+    restructureApply: "Reestruturar",
+    restructureWorking: "Reestruturando…",
+    restructureCustom: "Outra",
+    restructureCustomPh: "seg.",
+    fullscreen: "Tela cheia",
+    fullscreenExit: "Sair",
+    clipLabel: "Clipe",
+    productImageHint: "Arraste, cole ou clique",
 
     errorGeneric: "Algo deu errado. Tente novamente.",
     errorNoKey:

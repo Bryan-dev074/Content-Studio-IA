@@ -15,11 +15,17 @@ import {
 } from "./system-prompt";
 import { loadBrandLogo } from "./brand-asset";
 import { extractJson, sleep } from "./utils";
+import { computeCosts } from "./pricing";
+import {
+  buildRestructureSystemInstruction,
+  buildRestructureUserContent,
+} from "./system-prompt";
 import type {
   GenerateRequest,
   RefineRequest,
   RefineResponse,
   RegenerateSceneRequest,
+  RestructureRequest,
   Scene,
   ScriptResult,
   UploadResponse,
@@ -192,8 +198,54 @@ export async function generateScript(
     throw new Error("El modelo no devolvió contenido. Inténtalo de nuevo.");
   }
 
-  const parsed = extractJson<ScriptResult>(text);
-  return withFallbackIds(parsed);
+  const parsed = withFallbackIds(extractJson<ScriptResult>(text));
+  // Créditos DETERMINISTAS desde los prompts reales (no lo que improvise el modelo).
+  parsed.costs = computeCosts(parsed.scenes);
+  return parsed;
+}
+
+// ── Reestructuración del guion completo a otra duración ──────
+
+export async function restructureScript(
+  req: RestructureRequest,
+): Promise<ScriptResult> {
+  const ai = getClient();
+  const systemInstruction = await buildRestructureSystemInstruction(
+    req.productionMode,
+  );
+
+  const parts: Array<Record<string, unknown>> = [
+    { text: buildRestructureUserContent(req) },
+  ];
+
+  const logo = await loadBrandLogo();
+  if (logo) {
+    parts.push({
+      text: "Logotipo de ElaBela proporcionado: el prompt de imagen 0c del Gancho / primer clip debe indicar que se use este logo, ubicado de forma natural (sin describirlo en detalle):",
+    });
+    parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
+  }
+
+  const response = await generateWithRetry(ai, {
+    model: getModel(),
+    contents: [{ role: "user", parts }],
+    config: {
+      systemInstruction,
+      responseMimeType: "application/json",
+      temperature: 0.8,
+      topP: 0.95,
+      maxOutputTokens: 65536,
+    },
+  });
+
+  const text = response.text;
+  if (!text) {
+    throw new Error("El modelo no devolvió el guion reestructurado.");
+  }
+
+  const parsed = withFallbackIds(extractJson<ScriptResult>(text));
+  parsed.costs = computeCosts(parsed.scenes);
+  return parsed;
 }
 
 // ── Refinamiento de un prompt ────────────────────────────────

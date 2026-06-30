@@ -104,11 +104,35 @@ export function InputPanel({
       transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
       className="glass flex flex-col gap-5 rounded-2xl p-5 shadow-soft sm:p-6"
     >
-      <motion.div variants={fieldVariants}>
-        <h2 className="font-serif text-2xl font-semibold text-foreground">
-          {t.inputTitle}
-        </h2>
-        <p className="mt-1 text-sm text-muted">{t.inputSubtitle}</p>
+      <motion.div
+        variants={fieldVariants}
+        className="flex flex-wrap items-start justify-between gap-3"
+      >
+        <div>
+          <h2 className="font-serif text-2xl font-semibold text-foreground">
+            {t.inputTitle}
+          </h2>
+          <p className="mt-1 text-sm text-muted">{t.inputSubtitle}</p>
+        </div>
+        {/* Botón Generar también arriba, para no tener que bajar hasta el final */}
+        <motion.button
+          type="button"
+          onClick={submit}
+          disabled={loading}
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: loading ? 1 : 0.97 }}
+          className={cn(
+            "gradient-primary shimmer group relative inline-flex h-10 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl px-4 text-sm font-semibold text-primary-foreground shadow-soft transition-opacity",
+            loading && "cursor-not-allowed opacity-80",
+          )}
+        >
+          {loading ? (
+            <span className="h-4 w-4 animate-spin-slow rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" />
+          ) : (
+            <SparklesIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
+          )}
+          {t.generate}
+        </motion.button>
       </motion.div>
 
       <motion.div variants={fieldVariants}>

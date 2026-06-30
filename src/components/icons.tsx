@@ -142,6 +142,12 @@ export const RefreshIcon = (p: IconProps) => (
   </svg>
 );
 
+export const MaximizeIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3" />
+  </svg>
+);
+
 export const ClockIcon = (p: IconProps) => (
   <svg {...base} {...p}>
     <circle cx="12" cy="12" r="9" />

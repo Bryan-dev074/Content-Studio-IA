@@ -26,6 +26,9 @@ export interface PromptBlock {
   /** Qué hace falta CARGAR en Google Flow para generar esto
    *  (ej. "Foto del producto + logo de ElaBela", "Frame del avatar", "Ninguno"). */
   flowInputs?: Localized;
+  /** Rango temporal EXACTO que cubre este contenido dentro de la escena cuando hay
+   *  varios clips (ej. "33s – 39s"). La imagen 0c y su animación comparten rango. */
+  timecode?: string;
   /** El prompt en sí, ultra-detallado, en ambos idiomas. Es editable en la UI. */
   content: Localized;
 }
@@ -166,4 +169,15 @@ export interface RefineRequest {
 
 export interface RefineResponse {
   content: Localized;
+}
+
+/** Petición para REESTRUCTURAR el guion completo a otra duración total. */
+export interface RestructureRequest {
+  productionMode: ProductionMode;
+  /** Nueva duración total objetivo, en segundos. */
+  targetSec: number;
+  /** El guion ya generado que se quiere condensar/expandir. */
+  script: ScriptResult;
+  niche?: string;
+  tone?: string;
 }

@@ -3,6 +3,8 @@ import type {
   ProductionMode,
   RefineRequest,
   RegenerateSceneRequest,
+  RestructureRequest,
+  ScriptResult,
 } from "./types";
 import { loadContextDocs } from "./context";
 
@@ -46,6 +48,7 @@ las dos versiones de idioma { "es": "...", "pt": "..." } (pt = portugués de Bra
           "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
           "purpose": { "es": "QUÉ se quiere generar y TIPO de toma: 'Toma de PRODUCTO', 'Toma del AVATAR/PERSONA', 'Toma de FONDO/ESCENARIO' o 'Toma de TEXTURA/DETALLE' + una frase de objetivo", "pt": "..." },
           "flowInputs": { "es": "QUÉ cargar en Google Flow para esta toma: 'Foto del producto', 'Logo de ElaBela', 'Frame del avatar', combinación o 'Ninguno'", "pt": "..." },
+          "timecode": "33s – 39s",   // rango EXACTO que cubre ESTE clip dentro de la escena (cuando hay varios clips). Imagen 0c y su animación comparten timecode.
           "content": { "es": "PROMPT ULTRA-DETALLADO Y AUTOCONTENIDO", "pt": "PROMPT ULTRA-DETALHADO E AUTOCONTIDO" }
         }
       ]
@@ -135,6 +138,17 @@ ${modeBlock}
   detalle, plano medio...), ÁNGULO de cámara, MOVIMIENTO (push-in, dolly, whip
   pan, snap zoom...) y la acción exacta de ese segundo a ese segundo.
 - En "audio" escribe la locución limpia y natural, optimizada para ElevenLabs.
+- RITMO DE LOCUCIÓN (CRÍTICO): la locución de CADA toma DEBE poder decirse cómoda y
+  natural DENTRO de su timecode. Regla práctica: ~2–3 palabras por segundo. Un clip
+  de 3–4s admite ~8–12 palabras COMO MÁXIMO; uno de 6s, ~15–18. NUNCA escribas un
+  texto largo imposible de leer en el tiempo del clip: si no entra, recorta el
+  mensaje, simplifícalo o repártelo en más tomas. El guion debe poder locutarse
+  completo dentro de la duración total sin acelerarse de forma artificial.
+- TIMECODE POR CLIP: cuando una toma tenga VARIOS clips (varias imágenes 0c +
+  animaciones), asigna a CADA par imagen/animación su "timecode" EXACTO (ej.
+  "33s – 39s", "39s – 45s") de modo que los clips llenen el rango de la escena en
+  orden, sin huecos ni solapes; la imagen 0c y su animación comparten el mismo
+  "timecode". Si la toma es un único clip, el "timecode" del prompt = el de la escena.
 - ANÁLISIS DEL PRODUCTO: si se adjunta una FOTO del producto, ANALÍZALA a fondo —
   identifica qué producto es (tipo/categoría), su ENVASE (frasco, gotero, tubo,
   tarro, spray...), color, material, acabado, tapa y la etiqueta/texto visible, y
@@ -362,6 +376,7 @@ con texto legible en español (es) y portugués de Brasil (pt):
       "model": "Seedance 2.0" | "Seedance 2.0 mini" | "Kling 3.0" | "Omni Flash" | "NanoBanana Pro (Flow)",
       "purpose": { "es": "QUÉ se genera y TIPO de toma (Producto / Avatar-Persona / Fondo / Textura) + objetivo", "pt": "..." },
       "flowInputs": { "es": "QUÉ cargar en Flow (foto del producto, logo de ElaBela, frame del avatar, Ninguno)", "pt": "..." },
+      "timecode": "33s – 39s",   // rango exacto del clip si la escena tiene varios; si es único = el de la escena
       "content": { "es": "PROMPT ULTRA-DETALLADO Y AUTOCONTENIDO", "pt": "..." }
     }
   ]
@@ -439,4 +454,67 @@ export function buildSceneRegenUserContent(req: RegenerateSceneRequest): string 
     lines.push("", "Se adjuntan imágenes reales de productos como referencia fiel.");
   }
   return lines.filter(Boolean).join("\n");
+}
+
+// ── Reestructuración del guion completo a otra duración ──────
+
+export async function buildRestructureSystemInstruction(
+  productionMode: ProductionMode,
+): Promise<string> {
+  const base = await buildSystemInstruction(productionMode);
+  return `${base}
+
+═══════════════ MODO REESTRUCTURACIÓN ═══════════════
+Vas a REESTRUCTURAR un guion YA EXISTENTE a una NUEVA duración total. Mantén la
+MISMA gran idea, el MISMO gancho ganador y la esencia del mensaje, pero condensa o
+expande el contenido para que TODO quepa con SENTIDO y ritmo natural en la nueva
+duración. Reescribe desde cero los timecodes, las escenas, la locución y los prompts
+según el nuevo tiempo (no copies y pegues el original).
+- Si ACORTAS: prioriza Gancho + producto/beneficio clave + CTA con ElaBela; elimina
+  lo accesorio y reduce el número de tomas si hace falta.
+- Si ALARGAS: añade desarrollo, demostración o prueba social coherente, sin relleno.
+- RESPETA SIEMPRE el ritmo de locución: nada de textos imposibles de decir en el
+  tiempo del clip. El guion entero debe poder locutarse dentro de la nueva duración.
+Devuelve el guion COMPLETO en el MISMO formato JSON de siempre.`;
+}
+
+/** Versión compacta (solo ES) del guion para reestructurar sin inflar el input. */
+function slimScript(s: ScriptResult) {
+  return {
+    title: s.title?.es,
+    summary: s.summary?.es,
+    hookStrategy: s.hookStrategy?.es,
+    analysis: (s.analysis ?? []).map((a) => ({
+      layer: a.layer,
+      label: a.label?.es,
+      finding: a.finding?.es,
+    })),
+    scenes: (s.scenes ?? []).map((sc) => ({
+      label: sc.label?.es,
+      timecode: sc.timecode,
+      roll: sc.roll,
+      audio: sc.audio?.es,
+      visual: sc.visual?.es,
+    })),
+    cta: s.cta?.es,
+  };
+}
+
+export function buildRestructureUserContent(req: RestructureRequest): string {
+  return [
+    `Reestructura este guion GANADOR a una nueva duración TOTAL de ~${req.targetSec}s.`,
+    req.niche ? `Nicho / público: ${req.niche}.` : "",
+    req.tone ? `Tono de voz: ${req.tone}.` : "",
+    "",
+    "GUION ACTUAL (resumen en español) a reestructurar:",
+    "```json",
+    JSON.stringify(slimScript(req.script)),
+    "```",
+    "",
+    `Nueva duración objetivo: ~${req.targetSec}s en total, continua, sin huecos ni` +
+      ` solapes. Conserva la MISMA idea y gancho. Entrega el guion COMPLETO (es y pt)` +
+      ` en el formato JSON habitual, con la locución ajustada al tiempo de cada clip.`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

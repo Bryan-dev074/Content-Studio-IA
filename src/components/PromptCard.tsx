@@ -53,6 +53,11 @@ export function PromptCard({
             >
               {meta.label}
             </span>
+            {prompt.timecode && (
+              <span className="rounded-md bg-background/60 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-accent">
+                {prompt.timecode}
+              </span>
+            )}
             <span className="text-sm font-medium text-foreground">
               {prompt.title[lang]}
             </span>
