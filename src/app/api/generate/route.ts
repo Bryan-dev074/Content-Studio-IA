@@ -23,6 +23,7 @@ export async function POST(req: Request) {
       niche: body.niche ?? "",
       productionMode: body.productionMode === "hibrido" ? "hibrido" : "ia",
       durationSec: body.durationSec,
+      videoDurationSec: body.videoDurationSec,
       tone: body.tone,
       extraPrompt: body.extraPrompt,
       referenceNotes: body.referenceNotes,

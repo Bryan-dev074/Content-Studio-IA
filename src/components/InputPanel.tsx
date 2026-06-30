@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { VideoDropzone } from "./VideoDropzone";
 import { ProductList, makeProduct } from "./ProductList";
@@ -51,6 +51,16 @@ export function InputPanel({
   const [upload, setUpload] = useState<UploadResponse | null>(null);
   const [error, setError] = useState("");
 
+  // Duración real del video subido: actúa de piso (no se puede elegir menos).
+  const videoDuration = upload?.durationSec;
+
+  // Si la selección manual queda por debajo del video, vuelve a "Auto".
+  useEffect(() => {
+    if (videoDuration && durationSec > 0 && durationSec < videoDuration) {
+      setDurationSec(0);
+    }
+  }, [videoDuration, durationSec]);
+
   const submit = () => {
     if (!products.some((p) => p.name.trim())) {
       setError(t.requiredProduct);
@@ -62,6 +72,7 @@ export function InputPanel({
       niche: niche.trim(),
       productionMode: mode,
       durationSec: durationSec || undefined,
+      videoDurationSec: videoDuration,
       tone: tone || undefined,
       extraPrompt: extraPrompt.trim() || undefined,
       referenceNotes: referenceNotes.trim() || undefined,
@@ -149,17 +160,32 @@ export function InputPanel({
         <div>
           <Label>{t.duration}</Label>
           <div className="flex flex-wrap gap-2">
-            {durationOpts.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                onClick={() => setDurationSec(o.value)}
-                className={chipCls(durationSec === o.value)}
-              >
-                {o.label}
-              </button>
-            ))}
+            {durationOpts.map((o) => {
+              const blocked = !!videoDuration && o.value > 0 && o.value < videoDuration;
+              return (
+                <button
+                  key={o.value}
+                  type="button"
+                  disabled={blocked}
+                  onClick={() => setDurationSec(o.value)}
+                  title={blocked ? t.durationMinHint : undefined}
+                  className={cn(
+                    chipCls(durationSec === o.value),
+                    blocked && "cursor-not-allowed opacity-40 line-through",
+                  )}
+                >
+                  {o.label}
+                </button>
+              );
+            })}
           </div>
+          <p className="mt-1.5 text-xs text-muted">
+            {videoDuration
+              ? durationSec === 0
+                ? t.durationAutoHint
+                : t.durationMinHint
+              : t.durationAutoHint}
+          </p>
         </div>
         <div>
           <Label>{t.tone}</Label>

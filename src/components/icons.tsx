@@ -142,6 +142,13 @@ export const RefreshIcon = (p: IconProps) => (
   </svg>
 );
 
+export const ClockIcon = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </svg>
+);
+
 export const PlayIcon = (p: IconProps) => (
   <svg {...base} {...p}>
     <path d="M7 4l13 8-13 8z" />

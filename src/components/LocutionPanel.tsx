@@ -66,7 +66,13 @@ export function LocutionPanel({
           </span>
           <div>
             <h3 className="flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-              {t.locutionTitle} {ELEVEN_LOGO}
+              {mode === "hibrido" ? (
+                t.locutionTitleHybrid
+              ) : (
+                <>
+                  {t.locutionTitle} {ELEVEN_LOGO}
+                </>
+              )}
             </h3>
             <p className="text-xs text-muted">
               {mode === "hibrido" ? t.locutionHintHybrid : t.locutionHintIA}

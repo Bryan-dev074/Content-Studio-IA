@@ -108,6 +108,10 @@ export interface GenerateRequest {
   productionMode: ProductionMode;
   /** Duración objetivo del anuncio en segundos (0 / undefined = automático). */
   durationSec?: number;
+  /** Duración real (en segundos) del video de referencia subido, detectada en el
+   *  cliente. Sirve de piso/techo: el anuncio nunca debe durar MÁS que esto y, en
+   *  modo automático, debe quedar 2–3 s por debajo como máximo. */
+  videoDurationSec?: number;
   /** Tono de voz deseado (clave del selector). */
   tone?: string;
   extraPrompt?: string;
@@ -140,6 +144,8 @@ export interface UploadResponse {
   mimeType: string;
   name: string;
   displayName?: string;
+  /** Duración del video en segundos, detectada en el cliente (no aplica a imágenes). */
+  durationSec?: number;
 }
 
 export interface RefineRequest {

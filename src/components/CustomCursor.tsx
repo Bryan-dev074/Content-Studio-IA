@@ -68,9 +68,10 @@ export function CustomCursor() {
   const isHover = variant === "hover";
   const isText = variant === "text";
 
-  const ringW = isHover ? 52 : isText ? 5 : 32;
-  const ringH = isHover ? 52 : isText ? 26 : 32;
-  const dotSize = isHover || isText ? 0 : 6;
+  const ringW = isHover ? 52 : isText ? 5 : 34;
+  const ringH = isHover ? 52 : isText ? 26 : 34;
+  // La flecha se oculta sobre campos de texto (ahí manda el I-beam del anillo).
+  const showArrow = !isText;
 
   return (
     <>
@@ -93,20 +94,40 @@ export function CustomCursor() {
         }}
         transition={{ type: "spring", stiffness: 320, damping: 24 }}
       />
-      {/* Punto */}
+      {/* Flecha (con la temática de la marca) — la punta sigue exacta al mouse */}
       <motion.div
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full"
-        style={{ x, y, backgroundColor: "var(--accent)" }}
+        className="pointer-events-none fixed left-0 top-0 z-[9999]"
+        style={{ x, y }}
         animate={{
-          width: dotSize,
-          height: dotSize,
-          marginLeft: -dotSize / 2,
-          marginTop: -dotSize / 2,
-          scale: clicking ? 1.8 : 1,
+          opacity: showArrow ? 1 : 0,
+          scale: clicking ? 0.82 : isHover ? 1.12 : 1,
+          rotate: isHover ? -12 : 0,
         }}
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-      />
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
+          fill="none"
+          style={{ marginLeft: -2, marginTop: -2, filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))" }}
+        >
+          <defs>
+            <linearGradient id="cursorArrow" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="var(--accent)" />
+              <stop offset="100%" stopColor="var(--accent-2)" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M2 1.5 L2 16.5 L6 12.7 L8.7 18.6 L11.1 17.5 L8.5 11.8 L13.6 11.8 Z"
+            fill="url(#cursorArrow)"
+            stroke="var(--primary-foreground)"
+            strokeWidth="1.1"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </motion.div>
     </>
   );
 }

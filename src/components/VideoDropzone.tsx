@@ -9,6 +9,29 @@ import type { UploadResponse } from "@/lib/types";
 
 type Status = "idle" | "uploading" | "ready" | "error";
 
+/** Lee la duración (s) de un archivo de video en el cliente, sin subirlo. */
+function readVideoDuration(file: File): Promise<number | undefined> {
+  return new Promise((resolve) => {
+    try {
+      const url = URL.createObjectURL(file);
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      const done = (value?: number) => {
+        URL.revokeObjectURL(url);
+        resolve(value);
+      };
+      video.onloadedmetadata = () => {
+        const d = video.duration;
+        done(Number.isFinite(d) && d > 0 ? Math.round(d) : undefined);
+      };
+      video.onerror = () => done(undefined);
+      video.src = url;
+    } catch {
+      resolve(undefined);
+    }
+  });
+}
+
 export function VideoDropzone({
   onUploaded,
 }: {
@@ -19,6 +42,7 @@ export function VideoDropzone({
   const [status, setStatus] = useState<Status>("idle");
   const [dragging, setDragging] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [durationSec, setDurationSec] = useState<number | undefined>(undefined);
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleFile = useCallback(
@@ -32,14 +56,19 @@ export function VideoDropzone({
       setStatus("uploading");
       setErrorMsg("");
 
+      // La duración se lee en paralelo a la subida (no bloquea si falla).
+      const durationPromise = readVideoDuration(file);
+
       try {
         const fd = new FormData();
         fd.append("video", file);
         const res = await fetch("/api/upload", { method: "POST", body: fd });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || t.dropError);
+        const dur = await durationPromise;
+        setDurationSec(dur);
         setStatus("ready");
-        onUploaded(data as UploadResponse);
+        onUploaded({ ...(data as UploadResponse), durationSec: dur });
       } catch (err) {
         setStatus("error");
         setErrorMsg(err instanceof Error ? err.message : t.dropError);
@@ -59,6 +88,7 @@ export function VideoDropzone({
   const reset = () => {
     setStatus("idle");
     setFileName("");
+    setDurationSec(undefined);
     setErrorMsg("");
     onUploaded(null);
     if (inputRef.current) inputRef.current.value = "";
@@ -148,8 +178,15 @@ export function VideoDropzone({
                   <p className="truncate font-medium text-foreground">
                     {fileName}
                   </p>
-                  <p className="flex items-center gap-1 text-xs text-success">
-                    <FilmIcon className="h-3.5 w-3.5" /> {t.dropReady}
+                  <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-success">
+                    <span className="flex items-center gap-1">
+                      <FilmIcon className="h-3.5 w-3.5" /> {t.dropReady}
+                    </span>
+                    {durationSec ? (
+                      <span className="rounded-md bg-success/15 px-1.5 py-0.5 font-mono font-semibold text-success">
+                        {t.durationVideoDetected}: ~{durationSec}s
+                      </span>
+                    ) : null}
                   </p>
                 </div>
               </div>

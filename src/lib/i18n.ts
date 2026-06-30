@@ -62,6 +62,9 @@ export const dict = {
 
     duration: "Duración objetivo",
     durationAuto: "Auto",
+    durationVideoDetected: "Video detectado",
+    durationMinHint: "No puede ser menor que el video",
+    durationAutoHint: "≈ igual al video (2–3 s menos, nunca más)",
     tone: "Tono de voz",
     toneOptions: [
       "Amiga cercana (UGC)",
@@ -103,6 +106,9 @@ export const dict = {
     loadingStructuring: "Estructurando el guion segundo a segundo",
     loadingPrompts: "Escribiendo los prompts de imagen y video",
     loadingCosts: "Cuadrando los créditos",
+    loadingEstimate: "Tiempo estimado",
+    loadingElapsed: "Transcurrido",
+    loadingAlmost: "Casi listo, finalizando…",
 
     // Resultados
     resultsEmptyTitle: "Tu guion aparecerá aquí",
@@ -111,10 +117,11 @@ export const dict = {
     summary: "Idea central",
     hookStrategy: "Estrategia del gancho",
     locutionTitle: "Locución para ElevenLabs",
+    locutionTitleHybrid: "Guion de locución",
     locutionHintIA:
       "Voz en off completa y continua. Cópiala y pégala en ElevenLabs para generar el audio principal.",
     locutionHintHybrid:
-      "Lo que dice el presentador en cada toma (separado por clip).",
+      "Lo que dice el presentador en cada toma. Lo grabas con tu propia voz (no necesitas ElevenLabs).",
     copyAll: "Copiar todo",
     analysisTitle: "Lo que detecté del video",
     scriptTitle: "Guion",
@@ -219,6 +226,9 @@ export const dict = {
 
     duration: "Duração alvo",
     durationAuto: "Auto",
+    durationVideoDetected: "Vídeo detectado",
+    durationMinHint: "Não pode ser menor que o vídeo",
+    durationAutoHint: "≈ igual ao vídeo (2–3 s menos, nunca mais)",
     tone: "Tom de voz",
     toneOptions: [
       "Amiga próxima (UGC)",
@@ -259,6 +269,9 @@ export const dict = {
     loadingStructuring: "Estruturando o roteiro segundo a segundo",
     loadingPrompts: "Escrevendo os prompts de imagem e vídeo",
     loadingCosts: "Ajustando os créditos",
+    loadingEstimate: "Tempo estimado",
+    loadingElapsed: "Decorrido",
+    loadingAlmost: "Quase pronto, finalizando…",
 
     resultsEmptyTitle: "Seu roteiro aparecerá aqui",
     resultsEmptySubtitle:
@@ -266,10 +279,11 @@ export const dict = {
     summary: "Ideia central",
     hookStrategy: "Estratégia do gancho",
     locutionTitle: "Locução para ElevenLabs",
+    locutionTitleHybrid: "Roteiro de locução",
     locutionHintIA:
       "Voz em off completa e contínua. Copie e cole no ElevenLabs para gerar o áudio principal.",
     locutionHintHybrid:
-      "O que o apresentador diz em cada tomada (separado por clipe).",
+      "O que o apresentador diz em cada tomada. Você grava com sua própria voz (não precisa do ElevenLabs).",
     copyAll: "Copiar tudo",
     analysisTitle: "O que detectei do vídeo",
     scriptTitle: "Roteiro",

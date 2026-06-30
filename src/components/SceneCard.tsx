@@ -83,7 +83,7 @@ export function SceneCard({
               <AudioIcon className="h-4 w-4 text-accent" />
               {t.colAudio}
             </p>
-            <p className="text-[15px] leading-relaxed text-foreground">
+            <p className="break-words text-[15px] leading-relaxed text-foreground">
               {scene.audio[lang]}
             </p>
           </div>
@@ -92,7 +92,7 @@ export function SceneCard({
               <CameraIcon className="h-4 w-4 text-accent" />
               {t.colVisual}
             </p>
-            <p className="text-[15px] leading-relaxed text-foreground">
+            <p className="break-words text-[15px] leading-relaxed text-foreground">
               {scene.visual[lang]}
             </p>
           </div>

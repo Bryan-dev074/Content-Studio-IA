@@ -26,11 +26,18 @@ export function scriptToMarkdown(r: ScriptResult, lang: Lang): string {
     out.push("");
   }
 
-  // Locución lista para ElevenLabs
-  out.push(`## ${lang === "es" ? "Locución (ElevenLabs)" : "Locução (ElevenLabs)"}`);
+  // Locución. En IA es para ElevenLabs; en híbrido la graba el presentador.
   if (r.productionMode === "hibrido") {
+    out.push(
+      `## ${
+        lang === "es"
+          ? "Locución del presentador (grabación local)"
+          : "Locução do apresentador (gravação local)"
+      }`,
+    );
     r.scenes?.forEach((s) => out.push(`- [${s.timecode}] ${L(s.audio)}`));
   } else {
+    out.push(`## ${lang === "es" ? "Locución (ElevenLabs)" : "Locução (ElevenLabs)"}`);
     out.push(r.scenes?.map((s) => L(s.audio)).join("\n\n") ?? "");
   }
   out.push("");

@@ -127,6 +127,47 @@ body {
   background-clip: content-box;
 }
 
+/* Scroll propio y discreto para columnas con overflow independiente. */
+.nice-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-2) transparent;
+}
+.nice-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.nice-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-2) 70%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.nice-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  background-clip: content-box;
+}
+
+/* Difumina los bordes superior/inferior de una columna con scroll propio, para
+   que el contenido se desvanezca en lugar de verse "cortado" al desplazarse.
+   Solo en escritorio (donde existe el overflow interno). */
+@media (min-width: 1024px) {
+  .scroll-fade-y {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 26px,
+      #000 calc(100% - 26px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 26px,
+      #000 calc(100% - 26px),
+      transparent 100%
+    );
+  }
+}
+
 /* ── Utilidades de marca ────────────────────────────────────── */
 .font-serif {
   font-family: var(--font-serif);
@@ -221,6 +262,14 @@ body {
 }
 .animate-pulse-soft { animation: pulseSoft 1.8s ease-in-out infinite; }
 
+/* Cursor de escritura parpadeante para la consola del estado de carga. */
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-caret { animation: caretBlink 1s steps(1) infinite; }
+
 @media (prefers-reduced-motion: reduce) {
   .animate-floatA, .animate-floatB, .animate-floatC { animation: none; }
+  .animate-caret { animation: none; }
 }

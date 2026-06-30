@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SceneCard } from "./SceneCard";
 import { LocutionPanel } from "./LocutionPanel";
 import { CostTable } from "./CostTable";
 import { LoadingState } from "./LoadingState";
 import { SegmentedToggle } from "./SegmentedToggle";
 import { CatLogo } from "./CatLogo";
-import { DownloadIcon, GlobeIcon, SparklesIcon } from "./icons";
+import { ChevronDownIcon, DownloadIcon, GlobeIcon, SparklesIcon } from "./icons";
 import { useI18n } from "./providers/I18nProvider";
 import { scriptToMarkdown } from "@/lib/export";
 import { LANGS } from "@/lib/i18n";
@@ -33,16 +33,19 @@ export function ResultsPanel({
   error,
   example = false,
   brief,
+  estimateSec,
 }: {
   result: ScriptResult | null;
   loading: boolean;
   error: string;
   example?: boolean;
   brief?: { niche?: string; tone?: string; products?: ProductInput[] };
+  estimateSec?: number;
 }) {
   const { t, lang: uiLang } = useI18n();
   const [data, setData] = useState<ScriptResult | null>(null);
   const [scriptLang, setScriptLang] = useState<Lang>(uiLang);
+  const [analysisOpen, setAnalysisOpen] = useState(false);
 
   useEffect(() => {
     if (result) setData(structuredClone(result));
@@ -101,7 +104,7 @@ export function ResultsPanel({
     URL.revokeObjectURL(url);
   };
 
-  if (loading) return <LoadingState />;
+  if (loading) return <LoadingState estimateSec={estimateSec} />;
 
   if (error) {
     return (
@@ -170,10 +173,10 @@ export function ResultsPanel({
                 {data.productionMode === "hibrido" ? t.modeHybrid : t.modeIA}
               </span>
             </div>
-            <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
+            <h2 className="mt-2 break-words font-serif text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
               {data.title[scriptLang]}
             </h2>
-            <p className="mt-1.5 max-w-2xl text-[15px] text-muted">
+            <p className="mt-1.5 max-w-2xl break-words text-[15px] text-muted">
               {data.summary[scriptLang]}
             </p>
           </div>
@@ -201,40 +204,72 @@ export function ResultsPanel({
           <p className="text-[11px] font-bold uppercase tracking-wider text-accent">
             {t.hookStrategy}
           </p>
-          <p className="mt-1 text-sm text-foreground/90">
+          <p className="mt-1 break-words text-sm text-foreground/90">
             {data.hookStrategy[scriptLang]}
           </p>
         </div>
 
-        {/* Análisis */}
+        {/* Análisis — menú desplegable con lo que detectó la IA */}
         {data.analysis?.length > 0 && (
-          <div className="mt-4">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">
-              {t.analysisTitle}
-            </p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {data.analysis.map((a, i) => (
+          <div className="mt-4 overflow-hidden rounded-xl border border-border bg-surface-2/30">
+            <button
+              type="button"
+              onClick={() => setAnalysisOpen((v) => !v)}
+              aria-expanded={analysisOpen}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-2/50"
+            >
+              <span className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted">
+                  {t.analysisTitle}
+                </span>
+                <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-bold text-accent">
+                  {data.analysis.length}
+                </span>
+              </span>
+              <motion.span
+                animate={{ rotate: analysisOpen ? 180 : 0 }}
+                transition={{ duration: 0.25 }}
+                className="text-muted"
+              >
+                <ChevronDownIcon className="h-4 w-4" />
+              </motion.span>
+            </button>
+            <AnimatePresence initial={false}>
+              {analysisOpen && (
                 <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * i }}
-                  className="rounded-lg border border-border bg-surface-2/40 p-3"
+                  key="analysis-body"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden"
                 >
-                  <span
-                    className={cn(
-                      "rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
-                      LAYER_CLS[a.layer] ?? LAYER_CLS.visual,
-                    )}
-                  >
-                    {a.label[scriptLang]}
-                  </span>
-                  <p className="mt-1.5 text-sm text-foreground/85">
-                    {a.finding[scriptLang]}
-                  </p>
+                  <div className="grid gap-2 px-4 pb-4 sm:grid-cols-2">
+                    {data.analysis.map((a, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.04 * i }}
+                        className="rounded-lg border border-border bg-surface-2/40 p-3"
+                      >
+                        <span
+                          className={cn(
+                            "rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+                            LAYER_CLS[a.layer] ?? LAYER_CLS.visual,
+                          )}
+                        >
+                          {a.label[scriptLang]}
+                        </span>
+                        <p className="mt-1.5 break-words text-sm text-foreground/85">
+                          {a.finding[scriptLang]}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
-              ))}
-            </div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 

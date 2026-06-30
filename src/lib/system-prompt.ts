@@ -77,10 +77,12 @@ export async function buildSystemInstruction(
   se incrusta detrás en postproducción).
 - B-Roll = clips de soporte/producto con IA: cada uno con su prompt "imagen-0c"
   + un prompt "animacion" (image-to-video) + elección de modelo + diseño de SFX.
-- AUDIO: aquí la locución va POR ESCENAS / CLIPS — lo que el presentador dice en
-  CADA toma, separado por su timecode (NO como un único bloque continuo).
-- Como NO hay gasto en Lipsync, vuelca el presupuesto fuerte a Seedance 2.0
-  (alta calidad) en las tomas donde el producto es el protagonista.`
+- AUDIO: el presentador GRABA su locución con su PROPIA voz en el momento de
+  rodar (NO se usa ElevenLabs ni voz IA en este modo). Por eso la locución va POR
+  ESCENAS / CLIPS — lo que el presentador dice en CADA toma, separado por su
+  timecode (NO como un único bloque continuo). No menciones ElevenLabs.
+- Como NO hay gasto en Lipsync ni en voz IA, vuelca el presupuesto fuerte a
+  Seedance 2.0 (alta calidad) en las tomas donde el producto es el protagonista.`
       : `MODO ACTUAL: **100% IA (Lipsync + B-Roll)**.
 - FLUJO DE AUDIO (IMPORTANTE): la locución completa se genera PRIMERO en
   ElevenLabs como UNA sola voz en off continua. Los videos se generan SIN audio
@@ -196,9 +198,30 @@ export function buildUserContent(req: GenerateRequest): string {
     }`,
   );
 
+  const videoDur =
+    req.videoDurationSec && req.videoDurationSec > 0
+      ? Math.round(req.videoDurationSec)
+      : undefined;
+
   if (req.durationSec && req.durationSec > 0) {
+    const target = videoDur
+      ? Math.max(req.durationSec, videoDur) // nunca por debajo del video
+      : req.durationSec;
     lines.push(
-      `- Duración objetivo del anuncio: ~${req.durationSec}s. Ajusta el número de escenas y los timecodes para que sumen esa duración total de forma continua, sin huecos ni solapamientos.`,
+      `- Duración objetivo del anuncio: ~${target}s. Ajusta el número de escenas y los timecodes para que sumen esa duración total de forma continua, sin huecos ni solapamientos.`,
+    );
+    if (videoDur) {
+      lines.push(
+        `  El video de referencia dura ~${videoDur}s: el anuncio NUNCA debe durar MENOS que eso.`,
+      );
+    }
+  } else if (videoDur) {
+    // Modo automático con video: igualar (casi) la duración del original.
+    lines.push(
+      `- Duración objetivo del anuncio (AUTO): el video de referencia dura ~${videoDur}s. El anuncio debe durar CASI lo mismo: como máximo 2–3 segundos MENOS y NUNCA más de ${videoDur}s (rango ideal ${Math.max(
+        1,
+        videoDur - 3,
+      )}–${videoDur}s). Ajusta escenas y timecodes para sumar esa duración de forma continua, sin huecos ni solapamientos.`,
     );
   }
   if (req.tone?.trim()) {

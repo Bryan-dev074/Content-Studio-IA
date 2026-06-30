@@ -26,13 +26,13 @@ export default function Home() {
   const [error, setError] = useState("");
   const [isExample, setIsExample] = useState(false);
   const [brief, setBrief] = useState<Brief | undefined>(undefined);
+  const [estimateSec, setEstimateSec] = useState(50);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const scrollToResults = () => {
     setTimeout(() => {
-      if (window.innerWidth < 1024) {
-        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      // En todos los tamaños: lleva la vista a donde empieza a verse el contenido.
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 60);
   };
 
@@ -50,6 +50,13 @@ export default function Home() {
     setError("");
     setIsExample(false);
     setBrief({ niche: req.niche, tone: req.tone, products: req.products });
+    // Estimación: analizar un video tarda más (y crece con su duración).
+    // (Una generación solo-texto ronda ~60s; con video sube bastante.)
+    setEstimateSec(
+      req.videoFileUri
+        ? Math.min(150, 65 + Math.round((req.videoDurationSec ?? 20) * 0.7))
+        : 50,
+    );
     scrollToResults();
 
     try {
@@ -74,13 +81,13 @@ export default function Home() {
       <Background />
       <Header />
 
-      <main className="mx-auto max-w-7xl px-3 pb-24 pt-10 sm:px-5">
+      <main className="mx-auto max-w-7xl px-3 pb-20 pt-6 sm:px-5 sm:pb-24 sm:pt-10">
         {/* Hero */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-10 max-w-3xl text-center"
+          className="mx-auto mb-8 max-w-3xl text-center sm:mb-10"
         >
           <h1 className="font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl md:text-6xl">
             {t.heroTitle}{" "}
@@ -92,21 +99,24 @@ export default function Home() {
         </motion.section>
 
         {/* Layout principal */}
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,460px)_1fr]">
-          <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,460px)_1fr] lg:items-start">
+          {/* Columna de entrada: en escritorio scrollea por su cuenta (overflow
+              propio) para no depender del scroll global de la página. */}
+          <div className="nice-scroll scroll-fade-y lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:py-1.5 lg:pr-1.5">
             <InputPanel
               onGenerate={generate}
               onExample={showExample}
               loading={loading}
             />
           </div>
-          <div ref={resultsRef} className="scroll-mt-24">
+          <div ref={resultsRef} className="scroll-mt-20 sm:scroll-mt-24">
             <ResultsPanel
               result={result}
               loading={loading}
               error={error}
               example={isExample}
               brief={brief}
+              estimateSec={estimateSec}
             />
           </div>
         </div>
