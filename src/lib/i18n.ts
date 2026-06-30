@@ -62,9 +62,12 @@ export const dict = {
 
     duration: "Duración objetivo",
     durationAuto: "Auto",
-    durationVideoDetected: "Video detectado",
+    durationVideoDetected: "Duración del video",
     durationMinHint: "No puede ser menor que el video",
     durationAutoHint: "≈ igual al video (2–3 s menos, nunca más)",
+    durationAutoGeneric: "La IA elige la mejor duración.",
+    durationResume: "Versión resumida: condensa el guion a esos segundos manteniendo la idea.",
+    durationAdapt: "El guion se adaptará a esa duración.",
     tone: "Tono de voz",
     toneOptions: [
       "Amiga cercana (UGC)",
@@ -242,9 +245,12 @@ export const dict = {
 
     duration: "Duração alvo",
     durationAuto: "Auto",
-    durationVideoDetected: "Vídeo detectado",
+    durationVideoDetected: "Duração do vídeo",
     durationMinHint: "Não pode ser menor que o vídeo",
     durationAutoHint: "≈ igual ao vídeo (2–3 s menos, nunca mais)",
+    durationAutoGeneric: "A IA escolhe a melhor duração.",
+    durationResume: "Versão resumida: condensa o roteiro a esses segundos mantendo a ideia.",
+    durationAdapt: "O roteiro vai se adaptar a essa duração.",
     tone: "Tom de voz",
     toneOptions: [
       "Amiga próxima (UGC)",

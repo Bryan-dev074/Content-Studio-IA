@@ -263,15 +263,17 @@ export function buildUserContent(req: GenerateRequest): string {
       : undefined;
 
   if (req.durationSec && req.durationSec > 0) {
-    const target = videoDur
-      ? Math.max(req.durationSec, videoDur) // nunca por debajo del video
-      : req.durationSec;
+    const target = req.durationSec; // se RESPETA EXACTO lo que eligió el usuario
     lines.push(
-      `- Duración objetivo del anuncio: ~${target}s. Ajusta el número de escenas y los timecodes para que sumen esa duración total de forma continua, sin huecos ni solapamientos.`,
+      `- Duración objetivo del anuncio: ~${target}s EXACTOS. Ajusta el número de tomas y los timecodes para que SUMEN esa duración total de forma continua, sin huecos ni solapamientos, y la locución debe ENTRAR cómoda y natural en ese tiempo (≈2–3 palabras/seg).`,
     );
-    if (videoDur) {
+    if (videoDur && target < videoDur) {
       lines.push(
-        `  El video de referencia dura ~${videoDur}s: el anuncio NUNCA debe durar MENOS que eso.`,
+        `  El video de referencia dura ~${videoDur}s: CONDENSA su idea ganadora a ~${target}s (versión RESUMIDA). Conserva el gancho y el mensaje clave, recorta lo accesorio, reduce el nº de tomas y acorta la locución para que se diga natural en ~${target}s. NO mantengas la estructura larga del original.`,
+      );
+    } else if (videoDur && target > videoDur) {
+      lines.push(
+        `  El video de referencia dura ~${videoDur}s: EXPANDE la idea a ~${target}s con desarrollo coherente (demostración, prueba social, beneficios), sin relleno.`,
       );
     }
   } else if (videoDur) {

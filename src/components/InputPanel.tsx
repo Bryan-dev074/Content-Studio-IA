@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { VideoDropzone } from "./VideoDropzone";
 import { ProductList, makeProduct } from "./ProductList";
@@ -51,15 +51,8 @@ export function InputPanel({
   const [upload, setUpload] = useState<UploadResponse | null>(null);
   const [error, setError] = useState("");
 
-  // Duración real del video subido: actúa de piso (no se puede elegir menos).
+  // Duración real del video subido (referencia para "Auto" y para adaptar).
   const videoDuration = upload?.durationSec;
-
-  // Si la selección manual queda por debajo del video, vuelve a "Auto".
-  useEffect(() => {
-    if (videoDuration && durationSec > 0 && durationSec < videoDuration) {
-      setDurationSec(0);
-    }
-  }, [videoDuration, durationSec]);
 
   const submit = () => {
     if (!products.some((p) => p.name.trim())) {
@@ -81,12 +74,18 @@ export function InputPanel({
     });
   };
 
+  // Presets base + la duración del video detectada (para poder elegir el largo
+  // completo del original). Elegir menos = versión resumida del guion.
+  const presetValues = Array.from(
+    new Set([15, 20, 30, 45, ...(videoDuration ? [videoDuration] : [])]),
+  ).sort((a, b) => a - b);
   const durationOpts = [
-    { label: t.durationAuto, value: 0 },
-    { label: "15s", value: 15 },
-    { label: "20s", value: 20 },
-    { label: "30s", value: 30 },
-    { label: "45s", value: 45 },
+    { label: t.durationAuto, value: 0, isVideo: false },
+    ...presetValues.map((v) => ({
+      label: `${v}s`,
+      value: v,
+      isVideo: v === videoDuration,
+    })),
   ];
 
   const chipCls = (active: boolean) =>
@@ -184,31 +183,32 @@ export function InputPanel({
         <div>
           <Label>{t.duration}</Label>
           <div className="flex flex-wrap gap-2">
-            {durationOpts.map((o) => {
-              const blocked = !!videoDuration && o.value > 0 && o.value < videoDuration;
-              return (
-                <button
-                  key={o.value}
-                  type="button"
-                  disabled={blocked}
-                  onClick={() => setDurationSec(o.value)}
-                  title={blocked ? t.durationMinHint : undefined}
-                  className={cn(
-                    chipCls(durationSec === o.value),
-                    blocked && "cursor-not-allowed opacity-40 line-through",
-                  )}
-                >
-                  {o.label}
-                </button>
-              );
-            })}
+            {durationOpts.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                onClick={() => setDurationSec(o.value)}
+                title={o.isVideo ? t.durationVideoDetected : undefined}
+                className={cn(
+                  chipCls(durationSec === o.value),
+                  o.isVideo &&
+                    durationSec !== o.value &&
+                    "ring-1 ring-accent/40",
+                )}
+              >
+                {o.label}
+                {o.isVideo ? " 🎬" : ""}
+              </button>
+            ))}
           </div>
           <p className="mt-1.5 text-xs text-muted">
-            {videoDuration
-              ? durationSec === 0
+            {durationSec === 0
+              ? videoDuration
                 ? t.durationAutoHint
-                : t.durationMinHint
-              : t.durationAutoHint}
+                : t.durationAutoGeneric
+              : videoDuration && durationSec < videoDuration
+                ? t.durationResume
+                : t.durationAdapt}
           </p>
         </div>
         <div>
