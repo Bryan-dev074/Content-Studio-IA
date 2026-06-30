@@ -15,7 +15,15 @@ import { loadContextDocs } from "./context";
 const JSON_CONTRACT = `
 Devuelve EXCLUSIVAMENTE un objeto JSON válido (sin texto antes ni después, sin
 fences markdown) con ESTA forma EXACTA. Todos los campos de texto legible llevan
-las dos versiones de idioma { "es": "...", "pt": "..." } (pt = portugués de Brasil):
+las dos versiones de idioma { "es": "...", "pt": "..." } (pt = portugués de Brasil).
+
+REGLAS DE JSON VÁLIDO (OBLIGATORIO — para que el parseo NUNCA falle):
+- El resultado DEBE poder parsearse con JSON.parse sin errores.
+- DENTRO de los textos, para citar o enfatizar usa comillas simples ' o « », NUNCA
+  comillas dobles ". Una sola comilla doble sin escapar dentro de un valor ROMPE el
+  JSON. Si fuera imprescindible una comilla doble, escríbela escapada como \\".
+- Escribe cada valor de texto en UNA sola línea (sin saltos de línea crudos dentro
+  del string). No pongas comas finales (trailing commas) antes de } o ].
 
 {
   "productionMode": "ia" | "hibrido",
@@ -336,7 +344,9 @@ REGLA DE ORO: si el prompt corresponde a la imagen 0c del Gancho, mantén SIEMPR
 visible el logotipo de ElaBela (wordmark serif 'Ela, Bela' + corazón + 'glow',
 marrón cacao) integrado con elegancia.
 
-Devuelve EXCLUSIVAMENTE un objeto JSON válido, sin texto adicional ni fences:
+Devuelve EXCLUSIVAMENTE un objeto JSON válido, sin texto adicional ni fences. JSON
+100% válido: dentro del texto usa comillas simples ' o « », NUNCA comillas dobles "
+sin escapar; en una sola línea; sin comas finales:
 { "content": { "es": "prompt mejorado en español", "pt": "prompt mejorado en portugués de Brasil" } }
 `.trim();
 }
@@ -360,7 +370,9 @@ export function buildRefineUserContent(req: RefineRequest): string {
 
 const SCENE_CONTRACT = `
 Devuelve EXCLUSIVAMENTE un objeto JSON de UNA escena (sin texto extra ni fences),
-con texto legible en español (es) y portugués de Brasil (pt):
+con texto legible en español (es) y portugués de Brasil (pt). JSON 100% VÁLIDO:
+dentro de los textos usa comillas simples ' o « », NUNCA comillas dobles " sin
+escapar; cada valor en una sola línea; sin comas finales:
 {
   "id": "<mismo id de la escena>",
   "label": { "es": "...", "pt": "..." },

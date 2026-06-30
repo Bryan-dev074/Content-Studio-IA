@@ -76,6 +76,37 @@ async function generateWithRetry(
   throw lastErr;
 }
 
+/**
+ * Llama al modelo y PARSEA su JSON con tolerancia. Si la respuesta viene con JSON
+ * inválido (p. ej. una comilla doble sin escapar dentro de un texto, que el
+ * reparador no puede arreglar), REGENERA de cero hasta `max` veces — una salida
+ * nueva del modelo casi siempre es válida. Se apoya en generateWithRetry para los
+ * errores transitorios (429/500/503). Así un fallo puntual de formato no rompe la app.
+ */
+async function generateContentJson<T>(
+  ai: GoogleGenAI,
+  params: Parameters<typeof ai.models.generateContent>[0],
+  max = 2,
+): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < max; attempt++) {
+    const response = await generateWithRetry(ai, params);
+    const text = response.text;
+    if (!text) {
+      lastErr = new Error("El modelo no devolvió contenido.");
+      continue;
+    }
+    try {
+      return extractJson<T>(text);
+    } catch (err) {
+      lastErr = err; // JSON inválido → reintenta regenerando desde cero
+    }
+  }
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error("No se pudo interpretar la respuesta del modelo. Inténtalo de nuevo.");
+}
+
 // ── Subida de video a la Files API ───────────────────────────
 
 export async function uploadVideoToGemini(
@@ -179,7 +210,7 @@ export async function generateScript(
     parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
   }
 
-  const response = await generateWithRetry(ai, {
+  const parsed = await generateContentJson<ScriptResult>(ai, {
     model: getModel(),
     contents: [{ role: "user", parts }],
     config: {
@@ -193,15 +224,10 @@ export async function generateScript(
     },
   });
 
-  const text = response.text;
-  if (!text) {
-    throw new Error("El modelo no devolvió contenido. Inténtalo de nuevo.");
-  }
-
-  const parsed = withFallbackIds(extractJson<ScriptResult>(text));
+  const result = withFallbackIds(parsed);
   // Créditos DETERMINISTAS desde los prompts reales (no lo que improvise el modelo).
-  parsed.costs = computeCosts(parsed.scenes);
-  return parsed;
+  result.costs = computeCosts(result.scenes);
+  return result;
 }
 
 // ── Reestructuración del guion completo a otra duración ──────
@@ -226,7 +252,7 @@ export async function restructureScript(
     parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
   }
 
-  const response = await generateWithRetry(ai, {
+  const parsed = await generateContentJson<ScriptResult>(ai, {
     model: getModel(),
     contents: [{ role: "user", parts }],
     config: {
@@ -238,14 +264,9 @@ export async function restructureScript(
     },
   });
 
-  const text = response.text;
-  if (!text) {
-    throw new Error("El modelo no devolvió el guion reestructurado.");
-  }
-
-  const parsed = withFallbackIds(extractJson<ScriptResult>(text));
-  parsed.costs = computeCosts(parsed.scenes);
-  return parsed;
+  const result = withFallbackIds(parsed);
+  result.costs = computeCosts(result.scenes);
+  return result;
 }
 
 // ── Refinamiento de un prompt ────────────────────────────────
@@ -255,23 +276,22 @@ export async function refinePrompt(
 ): Promise<RefineResponse> {
   const ai = getClient();
 
-  const response = await generateWithRetry(ai, {
-    model: getModel(),
-    contents: [{ role: "user", parts: [{ text: buildRefineUserContent(req) }] }],
-    config: {
-      systemInstruction: buildRefineSystemInstruction(),
-      responseMimeType: "application/json",
-      temperature: 0.9,
-      maxOutputTokens: 4096,
+  return generateContentJson<RefineResponse>(
+    ai,
+    {
+      model: getModel(),
+      contents: [
+        { role: "user", parts: [{ text: buildRefineUserContent(req) }] },
+      ],
+      config: {
+        systemInstruction: buildRefineSystemInstruction(),
+        responseMimeType: "application/json",
+        temperature: 0.9,
+        maxOutputTokens: 4096,
+      },
     },
-  });
-
-  const text = response.text;
-  if (!text) {
-    throw new Error("El modelo no devolvió un prompt refinado.");
-  }
-
-  return extractJson<RefineResponse>(text);
+    3,
+  );
 }
 
 // ── Regeneración de una escena ───────────────────────────────
@@ -306,24 +326,21 @@ export async function regenerateScene(
     parts.push({ inlineData: { mimeType: logo.mimeType, data: logo.data } });
   }
 
-  const response = await generateWithRetry(ai, {
-    model: getModel(),
-    contents: [{ role: "user", parts }],
-    config: {
-      systemInstruction,
-      responseMimeType: "application/json",
-      temperature: 0.9,
-      topP: 0.95,
-      maxOutputTokens: 24576,
+  const scene = await generateContentJson<Scene>(
+    ai,
+    {
+      model: getModel(),
+      contents: [{ role: "user", parts }],
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json",
+        temperature: 0.9,
+        topP: 0.95,
+        maxOutputTokens: 24576,
+      },
     },
-  });
-
-  const text = response.text;
-  if (!text) {
-    throw new Error("El modelo no devolvió la escena regenerada.");
-  }
-
-  const scene = extractJson<Scene>(text);
+    3,
+  );
   scene.id = req.sceneId;
   scene.prompts = (scene.prompts ?? []).map((p, j) => ({
     ...p,

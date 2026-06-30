@@ -28,24 +28,35 @@ export function extractJson<T = unknown>(raw: string): T {
   }
   text = text.slice(first);
 
+  // Quita comas finales antes de } o ] (error común en salidas de LLM).
+  const noTrailingCommas = (s: string) => s.replace(/,(\s*[}\]])/g, "$1");
+  const tryParse = (s: string): T | undefined => {
+    for (const cand of [s, noTrailingCommas(s)]) {
+      try {
+        return JSON.parse(cand) as T;
+      } catch {
+        /* prueba la siguiente variante */
+      }
+    }
+    return undefined;
+  };
+
   // 1) Intento directo (recortando al último '}' de cierre).
   const last = text.lastIndexOf("}");
   if (last > 0) {
-    try {
-      return JSON.parse(text.slice(0, last + 1)) as T;
-    } catch {
-      /* sigue al reparador */
-    }
+    const direct = tryParse(text.slice(0, last + 1));
+    if (direct !== undefined) return direct;
   }
 
   // 2) Reparación de JSON truncado: conserva el mayor prefijo válido y cierra.
   const repaired = repairTruncatedJson(text);
   if (repaired) {
-    return JSON.parse(repaired) as T;
+    const fixed = tryParse(repaired);
+    if (fixed !== undefined) return fixed;
   }
 
-  // 3) Último intento (lanza el error de parseo original si todo falla).
-  return JSON.parse(text) as T;
+  // 3) Último intento (lanza el error de parseo si todo falla → el llamador reintenta).
+  return JSON.parse(noTrailingCommas(text)) as T;
 }
 
 /**
