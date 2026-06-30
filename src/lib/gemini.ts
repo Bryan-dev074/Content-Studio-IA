@@ -181,7 +181,9 @@ export async function generateScript(
       responseMimeType: "application/json",
       temperature: 0.85,
       topP: 0.95,
-      maxOutputTokens: 32768,
+      // Amplio: los prompts ultra-detallados + el "thinking" de 2.5-flash
+      // consumen tokens; con poco margen el JSON se truncaba.
+      maxOutputTokens: 65536,
     },
   });
 
@@ -260,7 +262,7 @@ export async function regenerateScene(
       responseMimeType: "application/json",
       temperature: 0.9,
       topP: 0.95,
-      maxOutputTokens: 8192,
+      maxOutputTokens: 24576,
     },
   });
 

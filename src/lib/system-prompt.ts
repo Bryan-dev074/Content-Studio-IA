@@ -129,6 +129,8 @@ ${modeBlock}
 ═══════════════ REGLAS DE CALIDAD ═══════════════
 - Cronometraje exacto: cada toma con su "timecode" (ej. "0s – 3s", "3s – 6s")
   cubriendo todo el anuncio de forma continua, sin huecos ni solapamientos.
+- NÚMERO DE TOMAS: estructura el anuncio en 4–6 tomas (máximo 7). Prioriza la
+  PROFUNDIDAD de cada prompt sobre la cantidad de tomas.
 - En "visual" especifica SIEMPRE: tipo de plano (primerísimo primer plano, plano
   detalle, plano medio...), ÁNGULO de cámara, MOVIMIENTO (push-in, dolly, whip
   pan, snap zoom...) y la acción exacta de ese segundo a ese segundo.
@@ -148,20 +150,39 @@ ${modeBlock}
 - UN SOLO SUJETO POR IMAGEN: cada imagen 0c muestra UN único foco. NUNCA pongas
   varios productos distintos juntos en la misma toma ni satures la escena con
   objetos. Si el guion tiene varios productos, cada uno va en su propia toma.
-- Los prompts de IMAGEN 0c se generan con **NanoBanana Pro en Google Flow**:
-  redáctalos en lenguaje natural fotográfico, EXTREMADAMENTE DETALLADOS, impecables
-  y AUTOCONTENIDOS — sujeto exacto, composición y encuadre 9:16, lente/cámara
-  virtual, distancia focal, iluminación (dirección, dureza, temperatura), paleta de
-  color, textura y materiales, fondo/props concretos, estado de ánimo y calidad
-  ("hyperrealistic, 8k, photoreal skin texture"). Deja claro si el protagonista es
-  el producto, la persona/avatar o el entorno. Un prompt nunca debe ser ambiguo.
-- Los prompts de ANIMACIÓN (image-to-video) deben ser IGUAL de detallados: parte
-  SIEMPRE de la imagen 0c correspondiente e indica el MOVIMIENTO exacto del sujeto y
-  de la CÁMARA (push-in, dolly, whip pan, orbit, snap zoom...), su velocidad,
-  duración en segundos y resolución/fps, la física del movimiento (cómo cae la gota,
-  cómo fluye la textura, el rebote), y salvaguardas de continuidad (mismo producto y
-  rostro, sin morphing, flicker, deformación ni cambio de etiqueta). Describe el
-  resultado esperado del clip.
+- PROMPTS DE IMAGEN 0c (NanoBanana Pro en Google Flow) — redáctalos en lenguaje
+  natural fotográfico, EXTREMADAMENTE DETALLADOS, impecables y AUTOCONTENIDOS (un
+  párrafo denso, ~80–140 palabras). Para CONTROL TOTAL del resultado, cada prompt de
+  imagen DEBE cubrir SIEMPRE, en este orden:
+  1) SUJETO principal exacto y qué tipo de toma es (producto / persona-avatar /
+     fondo / textura) — un solo foco.
+  2) Si es PERSONA: edad aprox., fenotipo, peinado, maquillaje, expresión, vestuario
+     y manos (anatómicamente correctas). Si es PRODUCTO: envase exacto, color,
+     material, tapa, etiqueta/logo legibles, fiel a la foto si se aportó.
+  3) ENCUADRE y plano (primerísimo primer plano, plano detalle, medio...), ÁNGULO y
+     altura de cámara, y composición (regla de tercios, espacio negativo).
+  4) CÁMARA/LENTE virtual: focal aproximada (ej. 35mm, 85mm, macro), apertura/bokeh,
+     profundidad de campo.
+  5) ILUMINACIÓN: esquema (key/fill/rim), dirección, dureza, temperatura de color,
+     hora del día y atmósfera.
+  6) PALETA de color, materiales y TEXTURAS concretas; FONDO y props específicos (sin
+     objetos de más).
+  7) CALIDAD y formato: "hyperrealistic, 8k, photoreal skin texture, vertical 9:16".
+  8) NEGATIVOS/salvaguardas: nada de texto ni marcas inventadas, sin productos
+     extra, sin manos deformes, sin morphing ni artefactos; producto y logo sin
+     deformar.
+- PROMPTS DE ANIMACIÓN / VIDEO (image-to-video) — IGUAL de detallados y
+  AUTOCONTENIDOS. Cada uno DEBE cubrir SIEMPRE:
+  1) Imagen 0c de PARTIDA (frame inicial) de la que arranca el clip.
+  2) MOVIMIENTO del sujeto: qué se mueve y cómo, paso a paso (gota que cae, textura
+     que fluye, parpadeo, giro del frasco...).
+  3) MOVIMIENTO de CÁMARA: tipo (push-in, dolly, whip pan, orbit, snap zoom...),
+     dirección, velocidad y curva (ease-in/out).
+  4) DURACIÓN en segundos, resolución y fps; ritmo del clip.
+  5) FÍSICA y luz en movimiento: peso, inercia, reflejos, cómo cambia la luz.
+  6) CONTINUIDAD/salvaguardas: misma identidad de rostro y mismo producto/etiqueta en
+     todos los frames, SIN morphing, flicker, warping ni deformación.
+  7) RESULTADO esperado del clip (qué se ve al final).
 - INTEGRIDAD Y CONSISTENCIA — incluye SIEMPRE estas salvaguardas en los prompts
   (de imagen y de video) cuando apliquen: el PRODUCTO NO debe deformarse,
   derretirse ni cambiar de forma, color, tamaño, etiqueta ni marca entre frames;
