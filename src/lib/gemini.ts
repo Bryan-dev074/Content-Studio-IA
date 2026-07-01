@@ -50,34 +50,71 @@ function getModel(): string {
   return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash";
 }
 
+/** ¿El error es transitorio (pico de carga / límite momentáneo) y merece reintento? */
+function isTransientError(err: unknown): boolean {
+  const status = (err as { status?: number })?.status;
+  const msg = err instanceof Error ? err.message : String(err);
+  return (
+    status === 429 ||
+    status === 500 ||
+    status === 503 ||
+    /\b(429|500|503)\b|rate|quota|overloaded|unavailable|temporar|high demand/i.test(
+      msg,
+    )
+  );
+}
+
+/**
+ * Convierte un error crudo del modelo en un mensaje CLARO para el usuario (nunca
+ * el JSON crudo de la API). Para picos de carga (503) o límites (429) da una guía
+ * accionable: "espera unos segundos y reintenta".
+ */
+function friendlyModelError(err: unknown): Error {
+  const status = (err as { status?: number })?.status;
+  const msg = err instanceof Error ? err.message : String(err);
+  if (status === 503 || /503|overloaded|unavailable|high demand/i.test(msg)) {
+    return new Error(
+      "El servicio de IA está saturado en este momento. Espera unos segundos y vuelve a intentarlo.",
+    );
+  }
+  if (status === 429 || /429|quota|rate limit/i.test(msg)) {
+    return new Error(
+      "Se alcanzó el límite de solicitudes de la IA por ahora. Espera un momento y vuelve a intentarlo.",
+    );
+  }
+  if (status === 500 || /\b500\b|internal/i.test(msg)) {
+    return new Error(
+      "La IA tuvo un error temporal. Vuelve a intentarlo en unos segundos.",
+    );
+  }
+  return err instanceof Error ? err : new Error(String(err));
+}
+
 /**
  * Llama a generateContent reintentando ante errores transitorios
- * (429 rate limit, 503 sobrecarga, 500). Evita que un pico momentáneo en la
- * capa gratuita rompa la generación.
+ * (429 rate limit, 503 sobrecarga, 500) con backoff exponencial + jitter. Evita
+ * que un pico momentáneo en la capa gratuita rompa la generación. Si aun así
+ * falla, lanza un mensaje CLARO (no el JSON crudo de la API).
  */
 async function generateWithRetry(
   ai: GoogleGenAI,
   params: Parameters<typeof ai.models.generateContent>[0],
 ) {
-  const MAX = 3;
+  const MAX = 5;
   let lastErr: unknown;
   for (let attempt = 0; attempt < MAX; attempt++) {
     try {
       return await ai.models.generateContent(params);
     } catch (err) {
       lastErr = err;
-      const status = (err as { status?: number })?.status;
-      const msg = err instanceof Error ? err.message : String(err);
-      const transient =
-        status === 429 ||
-        status === 500 ||
-        status === 503 ||
-        /\b(429|500|503)\b|rate|quota|overloaded|unavailable|temporar/i.test(msg);
-      if (!transient || attempt === MAX - 1) break;
-      await sleep(1800 * (attempt + 1));
+      if (!isTransientError(err) || attempt === MAX - 1) break;
+      // Backoff exponencial (1.5s, 3s, 6s, 8s) + jitter para no reintentar todos
+      // a la vez cuando el modelo está saturado.
+      const base = Math.min(8000, 1500 * 2 ** attempt);
+      await sleep(base + Math.floor(Math.random() * 600));
     }
   }
-  throw lastErr;
+  throw friendlyModelError(lastErr);
 }
 
 /**
