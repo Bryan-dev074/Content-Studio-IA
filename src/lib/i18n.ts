@@ -154,6 +154,29 @@ export const dict = {
       "Realzar el producto",
     ],
 
+    // Reescribir locución con IA
+    locutionRefine: "Sugerencias IA",
+    locutionRefineTitle: "Reescribir locución",
+    locutionRefineSubtitle:
+      "Elige un enfoque o escribe cómo quieres decirlo. La IA propone alternativas que entran en el tiempo de la toma.",
+    locutionRefineChips: [
+      "Más corta (entra en el tiempo)",
+      "Más natural",
+      "Más persuasiva",
+      "Otro gancho",
+      "Menos genérica",
+      "Con urgencia",
+      "Más sensorial",
+    ],
+    locutionRefineInstructionPh:
+      "Ej. que suene más de amiga, empieza con una pregunta, menciona el resultado…",
+    locutionRefineGenerate: "Generar alternativas",
+    locutionRefineMore: "Otras alternativas",
+    locutionRefineWorking: "Buscando alternativas…",
+    locutionRefineSuggestions: "Alternativas",
+    locutionRefineUse: "Usar esta",
+    locutionRefineCurrent: "Locución actual",
+
     costsTitle: "Desglose de créditos",
     costShot: "Toma",
     costModel: "Modelo",
@@ -334,6 +357,29 @@ export const dict = {
       "Mais minimalista",
       "Realçar o produto",
     ],
+
+    // Reescrever locução com IA
+    locutionRefine: "Sugestões IA",
+    locutionRefineTitle: "Reescrever locução",
+    locutionRefineSubtitle:
+      "Escolha um enfoque ou escreva como quer dizer. A IA propõe alternativas que cabem no tempo da tomada.",
+    locutionRefineChips: [
+      "Mais curta (cabe no tempo)",
+      "Mais natural",
+      "Mais persuasiva",
+      "Outro gancho",
+      "Menos genérica",
+      "Com urgência",
+      "Mais sensorial",
+    ],
+    locutionRefineInstructionPh:
+      "Ex. que soe mais de amiga, comece com uma pergunta, mencione o resultado…",
+    locutionRefineGenerate: "Gerar alternativas",
+    locutionRefineMore: "Outras alternativas",
+    locutionRefineWorking: "Buscando alternativas…",
+    locutionRefineSuggestions: "Alternativas",
+    locutionRefineUse: "Usar esta",
+    locutionRefineCurrent: "Locução atual",
 
     costsTitle: "Detalhamento de créditos",
     costShot: "Tomada",

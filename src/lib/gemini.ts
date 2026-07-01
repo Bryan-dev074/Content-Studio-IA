@@ -10,6 +10,8 @@ import {
   buildUserContent,
   buildRefineSystemInstruction,
   buildRefineUserContent,
+  buildLocutionRefineSystemInstruction,
+  buildLocutionRefineUserContent,
   buildSceneRegenSystemInstruction,
   buildSceneRegenUserContent,
 } from "./system-prompt";
@@ -22,6 +24,8 @@ import {
 } from "./system-prompt";
 import type {
   GenerateRequest,
+  LocutionRefineRequest,
+  LocutionRefineResponse,
   RefineRequest,
   RefineResponse,
   RegenerateSceneRequest,
@@ -292,6 +296,40 @@ export async function refinePrompt(
     },
     3,
   );
+}
+
+// ── Refinamiento de la locución (alternativas) ───────────────
+
+export async function refineLocution(
+  req: LocutionRefineRequest,
+): Promise<LocutionRefineResponse> {
+  const ai = getClient();
+
+  const result = await generateContentJson<LocutionRefineResponse>(
+    ai,
+    {
+      model: getModel(),
+      contents: [
+        { role: "user", parts: [{ text: buildLocutionRefineUserContent(req) }] },
+      ],
+      config: {
+        systemInstruction: buildLocutionRefineSystemInstruction(
+          req.productionMode,
+        ),
+        responseMimeType: "application/json",
+        temperature: 1,
+        topP: 0.95,
+        maxOutputTokens: 4096,
+      },
+    },
+    3,
+  );
+
+  // Normaliza: solo alternativas con texto real, máximo 3.
+  result.suggestions = (result.suggestions ?? [])
+    .filter((s) => s?.content?.es?.trim() || s?.content?.pt?.trim())
+    .slice(0, 3);
+  return result;
 }
 
 // ── Regeneración de una escena ───────────────────────────────

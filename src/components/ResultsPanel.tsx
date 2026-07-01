@@ -95,6 +95,37 @@ export function ResultsPanel({
     );
   };
 
+  // La locución (audio) editada arriba es la MISMA fuente de verdad que las
+  // escenas de abajo: al escribir, se actualiza la escena y se refleja todo.
+  const updateAudio = (sceneId: string, l: Lang, value: string) => {
+    setData((prev) =>
+      !prev
+        ? prev
+        : {
+            ...prev,
+            scenes: prev.scenes.map((s) =>
+              s.id !== sceneId
+                ? s
+                : { ...s, audio: { ...s.audio, [l]: value } },
+            ),
+          },
+    );
+  };
+
+  // La IA propuso una alternativa completa (es + pt): reemplaza ambos idiomas.
+  const applyAudio = (sceneId: string, content: Localized) => {
+    setData((prev) =>
+      !prev
+        ? prev
+        : {
+            ...prev,
+            scenes: prev.scenes.map((s) =>
+              s.id !== sceneId ? s : { ...s, audio: content },
+            ),
+          },
+    );
+  };
+
   const replaceScene = (sceneId: string, newScene: Scene) => {
     setData((prev) =>
       !prev
@@ -412,6 +443,8 @@ export function ResultsPanel({
         scenes={data.scenes}
         mode={data.productionMode}
         lang={scriptLang}
+        onUpdateAudio={updateAudio}
+        onApplyAudio={applyAudio}
       />
 
       {/* Guion: escenas */}

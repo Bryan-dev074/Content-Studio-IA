@@ -1,5 +1,6 @@
 import type {
   GenerateRequest,
+  LocutionRefineRequest,
   ProductionMode,
   RefineRequest,
   RegenerateSceneRequest,
@@ -364,6 +365,80 @@ export function buildRefineUserContent(req: RefineRequest): string {
     "CAMBIO QUE PIDE EL USUARIO:",
     req.instruction,
   ].join("\n");
+}
+
+// ── Refinamiento de la LOCUCIÓN (lo que se DICE) ─────────────
+
+export function buildLocutionRefineSystemInstruction(
+  productionMode: ProductionMode,
+): string {
+  const modeNote =
+    productionMode === "hibrido"
+      ? "Modo HÍBRIDO: el presentador GRABA esta línea con su PROPIA voz al rodar. Debe sonar natural, hablada y cómoda de decir en cámara (no un texto de lectura rígido)."
+      : "Modo 100% IA: esta línea se genera con voz IA (ElevenLabs) como parte de una voz en off continua. Debe fluir natural al leerse en voz alta.";
+
+  return `
+Eres un copywriter y guionista de élite de anuncios de cosmética de la marca
+ElaBela, experto en locución que RETIENE y VENDE (UGC, dermo, performance ads).
+
+Recibes UNA línea de locución (lo que se DICE en una toma concreta, con su rango
+de tiempo) y, opcionalmente, un enfoque del usuario. Tu trabajo: proponer 3
+ALTERNATIVAS de cómo decir ESA misma idea de otra manera — más natural, más
+persuasiva o mejor ritmada — para que el usuario elija.
+
+${modeNote}
+
+REGLAS DE LAS ALTERNATIVAS:
+- Conserva la INTENCIÓN y el rol de la toma (un gancho sigue siendo gancho; un CTA
+  sigue llevando a la acción y menciona 'ElaBela').
+- RITMO (CRÍTICO): cada alternativa DEBE poder decirse cómoda y natural DENTRO del
+  rango de tiempo de la toma (≈2–3 palabras por segundo). Si la toma dura 3s, ~8–12
+  palabras COMO MÁXIMO. Nunca propongas algo imposible de decir en ese tiempo.
+- Que las 3 sean DISTINTAS entre sí (distinto ángulo, verbo o gancho), no variaciones
+  triviales de puntuación.
+- Español natural de conversación y portugués de Brasil natural (no traducción
+  literal): ambas versiones igual de pulidas.
+- Nada de emojis, acotaciones técnicas ni comillas dobles dentro del texto.
+- En "note" escribe UNA frase corta que explique QUÉ cambia y POR QUÉ es mejor
+  (la recomendación), en es y pt (ej. 'Más corta y directa, entra mejor en 3s').
+
+Devuelve EXCLUSIVAMENTE un objeto JSON válido, sin texto adicional ni fences. JSON
+100% válido: dentro del texto usa comillas simples ' o « », NUNCA comillas dobles "
+sin escapar; cada valor en una sola línea; sin comas finales. Forma EXACTA (3
+alternativas):
+{
+  "suggestions": [
+    { "content": { "es": "alternativa en español", "pt": "alternativa en portugués BR" },
+      "note": { "es": "qué cambia y por qué mejora", "pt": "..." } }
+  ]
+}
+`.trim();
+}
+
+export function buildLocutionRefineUserContent(
+  req: LocutionRefineRequest,
+): string {
+  const lines = [
+    `Toma: ${req.label?.trim() || "(sin etiqueta)"}${
+      req.timecode ? ` — rango de tiempo ${req.timecode}` : ""
+    }.`,
+    `Modo de producción: ${req.productionMode === "hibrido" ? "Híbrido" : "100% IA"}.`,
+    `Idioma que el usuario está viendo: ${req.lang === "pt" ? "portugués (BR)" : "español"}.`,
+    "",
+    "LOCUCIÓN ACTUAL (lo que se dice en esta toma):",
+    "```",
+    req.currentText,
+    "```",
+  ];
+  if (req.instruction?.trim()) {
+    lines.push("", "ENFOQUE / CAMBIO QUE PIDE EL USUARIO:", req.instruction.trim());
+  } else {
+    lines.push(
+      "",
+      "El usuario NO dio un enfoque concreto: propón las 3 mejores alternativas para decir esto de otra manera (más natural, más persuasiva y mejor ritmada).",
+    );
+  }
+  return lines.join("\n");
 }
 
 // ── Regeneración de UNA escena ───────────────────────────────

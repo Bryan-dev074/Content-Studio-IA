@@ -171,6 +171,35 @@ export interface RefineResponse {
   content: Localized;
 }
 
+// ── Refinamiento de la LOCUCIÓN (lo que se DICE) ─────────────
+
+/** Petición para reescribir la locución de UNA toma con alternativas. */
+export interface LocutionRefineRequest {
+  /** Texto actual de la locución (en el idioma que el usuario está viendo). */
+  currentText: string;
+  /** Idioma que el usuario está editando (para dar contexto de estilo). */
+  lang: Lang;
+  /** Rango temporal de la toma (ej. "0s – 3s") — marca el ritmo/duración. */
+  timecode?: string;
+  /** Etiqueta de la toma (ej. "Gancho", "CTA") para dar contexto. */
+  label?: string;
+  /** Instrucción/enfoque opcional del usuario (qué quiere cambiar). */
+  instruction?: string;
+  productionMode: ProductionMode;
+}
+
+/** Una alternativa de locución con una nota de por qué / qué cambia. */
+export interface LocutionSuggestion {
+  /** El texto alternativo, en ambos idiomas. */
+  content: Localized;
+  /** Recomendación corta: qué cambia y por qué mejora. */
+  note: Localized;
+}
+
+export interface LocutionRefineResponse {
+  suggestions: LocutionSuggestion[];
+}
+
 /** Petición para REESTRUCTURAR el guion completo a otra duración total. */
 export interface RestructureRequest {
   productionMode: ProductionMode;
